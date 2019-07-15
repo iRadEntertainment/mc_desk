@@ -8,6 +8,9 @@ extends Control
 func _ready():
 	netwrk.connect_to()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func show_panel(panel_name):
+	for child in $cnt_center.get_children():
+		child.hide()
+	match panel_name:
+		"control panel": glb.pnl_control_room.show()
+		"login panel"  : glb.pnl_login.show()

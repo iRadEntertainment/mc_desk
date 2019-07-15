@@ -4,33 +4,38 @@
 
 extends Node
 
+#user
+var user_name = null
+
 #log
 var log_max_size = 1000
-
-#network
-var fl_connected = false
-var fl_logged_in = false
-var net_id = -1
 
 #swipe_detect
 var fl_screen_p = false
 var fl_dragging = false
 var current_tab = 1
 
+#nodes
+onready var main             = $"/root/main"
+onready var pnl_control_room = $"/root/main/cnt_center/control_room"
+onready var pnl_login        = $"/root/main/cnt_center/login_panel"
 
 #--------------------- console utilities ---------------------
 func log_print(string):
-	var dic = OS.get_datetime()
-	var time = [dic["month"],dic["day"],dic["hour"],dic["minute"],dic["second"]]
-	var log_entry = [time,string]
-	data_mng.console_log.push_back(log_entry)
-	while data_mng.console_log.size() > log_max_size:
-		data_mng.console_log.pop_front()
+	var unix = OS.get_unix_time()
+	var log_entry = [unix,string]
+	var console_log = data_mng.console_log
+	console_log.push_back(log_entry)
+	while console_log.size() > log_max_size:
+		console_log.pop_front()
 	
 	print(format_log_entry(log_entry))
+	data_mng.console_log = console_log
 
 func format_log_entry(log_entry):
-	var time = log_entry[0]
+	var unix = log_entry[0]
+	var dic = OS.get_datetime_from_unix_time(unix)
+	var time = [dic["month"],dic["day"],dic["hour"],dic["minute"],dic["second"]]
 	var string = log_entry[1]
 	#print sdtout
 	var time_str   = "%02d/%02d [%02d:%02d:%02d]"%time

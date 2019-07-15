@@ -24,6 +24,11 @@ config/icon="res://icon.png"
 netwrk="*res://scripts/netwrk.gd"
 data_mng="*res://scripts/data_mng.gd"
 glb="*res://scripts/glb.gd"
+remote_func="*res://scripts/remote_func.gd"
+
+[debug]
+
+gdscript/warnings/enable=false
 
 [rendering]
 

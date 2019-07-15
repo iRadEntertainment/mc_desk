@@ -4,9 +4,9 @@
 extends Node
 
 #---------- config_files
-var data_dir  = str(OS.get_system_dir(0))
+var data_dir  = "res://"#str(OS.get_system_dir(0))
 var data_filename = "mc_data.cfg"
-var data_path = str(data_dir,"/",data_filename)
+var data_path = str(data_dir,data_filename)
 
 #---------- config_files
 var console_log = [] setget _log_updated
@@ -15,6 +15,9 @@ signal log_updated
 
 func _ready():
 	load_initial_settings()
+
+
+#------------------------------ config file: save/load/create ---------------------------
 
 func load_initial_settings():
 	glb.log_print("DATA MANAGER: loading initial settings")
@@ -28,7 +31,7 @@ func load_initial_settings():
 	else:
 		var file_config = ConfigFile.new()
 		file_config.load(data_path)
-		#var_name = file_config.get_value("settings", "var_name", var_name(or default value) )
+		console_log = file_config.get_value("settings", "console_log", [] )
 
 func create_default_config():
 	glb.log_print("DATA MANAGER: creating default file")
@@ -53,14 +56,7 @@ func create_default_config():
 		glb.log_print( str("DATA MANAGER: unable to save config file -> Error ", err_cfg))
 
 
-func save_game():
-	var save_game = File.new()
-	save_game.open("user://savegame.save", File.WRITE)
-	var save_nodes = get_tree().get_nodes_in_group("Persist")
-	for i in save_nodes:
-		var node_data = i.call("save");
-		save_game.store_line(to_json(node_data))
-	save_game.close()
+#----------------------------------------------- set_get ------------------------------
 
 func _log_updated(val):
 	console_log = val

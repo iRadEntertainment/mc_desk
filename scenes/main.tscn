@@ -1,8 +1,419 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
+[ext_resource path="res://styles/small_labels.tres" type="Theme" id=2]
+[ext_resource path="res://sprites/leds.png" type="Texture" id=3]
+[ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=10]
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Label
+
+func _ready():
+	netwrk.connect(\"network_status_changed\",self,\"_network_status\")
+
+func _network_status(val):
+	if val:
+		$led.set(\"frame\",1)
+		text = \"Server ON\"
+	else:
+		$led.set(\"frame\",2)
+		text = \"Server OFF\"
+	"
+
+[sub_resource type="GDScript" id=12]
+script/source = "extends Button
+
+func _pressed():
+	glb.main.show_panel(\"control panel\")"
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends Button
+
+func _pressed():
+	glb.main.show_panel(\"login panel\")"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Button
+
+func _pressed():
+	netwrk.connect_to()"
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Button
+
+func _pressed():
+	netwrk.disconnect_from()"
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"shut_down_server\")"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"restart_server\")"
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends Button
+
+var max_iterations = 9000000
+var tmr = Timer.new()
+var fl_running = false
+
+var step = 0
+var val = 0
+
+
+
+func _ready():
+	$PI_val.text = str( \"%.16f\"%PI )
+	add_child(tmr)
+	set_process(false)
+	set_physics_process(false)
+#	tmr.one_shot = false
+#	tmr.wait_time = 0.001
+#	tmr.connect(\"timeout\",self,\"_count_step\")
+
+func _pressed():
+	_count_step()
+	val = 0
+	
+#	if fl_running:
+##		tmr.stop()
+#		set_process(false)
+#		set_physics_process(false)
+#		fl_running = false
+#		step = 0
+#	else:
+##		tmr.start()
+##		set_process(true)
+#		set_physics_process(true)
+#		val = 0
+#		fl_running = true
+
+#func _physics_process(delta):
+#	_count_step()
+
+#func _process(delta):
+#	_count_step()
+
+#var adding_frac = 1.0
+#func _count_step():
+#	if step > max_iterations:
+##		tmr.stop()
+#		set_process(false)
+#		set_physics_process(false)
+#		fl_running = false
+#		print(\"step: \",step, \" - val: \", str(val*4))
+#		$calc_val.text = str(val*4)
+#		step = 0
+#	else:
+#		adding_frac = 1.0/(1+2*step) # * (-1 + 2*int(step%2 == 0) )
+#		if step%2 != 0:
+#			adding_frac *= -1
+#		val += adding_frac
+#
+##		if step%15 == 0:
+##			print(\"step: \",step, \" - val: \", str(val*4))
+##			$calc_val.text = str(val*4)
+#
+#		step += 1
+
+
+func _count_step():
+	var adding_frac = 1.0
+	var tick_start = OS.get_ticks_msec()
+	var tick_last  = tick_start
+	while step < max_iterations:
+		adding_frac = 1.0/(1+2*step) # * (-1 + 2*int(step%2 == 0) )
+		if step%2 != 0:
+			adding_frac *= -1
+		val += adding_frac
+		if step%50000 == 0:
+			var tick_elapsed = OS.get_ticks_msec()
+			var tick_d = tick_elapsed - tick_last
+			tick_last = tick_elapsed
+			print(\"tick: \",str(tick_d),\" - step: \",step, \" - val: \", str(\"%.16f\"%(val*4) ))
+		step += 1
+	
+	var tick_elapsed = OS.get_ticks_msec()
+	var tick_d = tick_elapsed - tick_start
+	
+	print(\"step: \",step, \" - val: \", str(\"%.16f\"%(val*4) ) )
+	$calc_val.text = str( \"%.16f\"%(val*4) , \" in \" , str(tick_d) , \" msec.\" )
+	step = 0"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends VBoxContainer
+
+# Declare member variables here. Examples:
+# var a = 2
+# var b = \"text\"
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	remote_func.connect(\"server_log_received\",self,\"_update_all_entries\")
+	remote_func.connect(\"server_log_updated\",self,\"_update_with_last_entry\")
+	retrieve_server_log()
+
+
+func retrieve_server_log():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())
+		#rpc(\"send_server_log\") emit signal \"server_log_received\"
+
+func _update_all_entries(server_log):
+	#clear all childs
+	for child in get_children():
+		child.free()
+	#add each entry
+	#--load font theme
+	var small_fonts_theme = load(\"res://styles/small_labels.tres\")
+	for entry in server_log:
+		var new_label = Label.new()
+		
+		var dic = OS.get_datetime_from_unix_time(entry[0])
+		var time = \"%s/%s %02d:%02d:%02d\"%[dic[\"month\"],dic[\"day\"],dic[\"hour\"],dic[\"minute\"],dic[\"second\"]]
+		
+		var user = \"Unknown\"
+		match entry[1]:
+			1:
+				user = \"Server\"
+				new_label.set(\"custom_colors/font_color\",Color.purple)
+			0:
+				user = \"To All\"
+		var msg  = entry[2]
+		
+		new_label.text = \"%s %s - %s\"%[time,user,msg]
+		new_label.theme = small_fonts_theme
+		add_child(new_label)
+	
+	#scroll to the last
+	yield(get_tree(),\"idle_frame\")
+	$\"..\".scroll_vertical = 70000
+
+func _update_with_last_entry(entry):
+	
+	pass"
 
 [node name="main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
+
+[node name="bg" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.988235, 0.913725, 0.0980392, 1 )
+
+[node name="top_bar" type="Control" parent="."]
+anchor_right = 1.0
+rect_min_size = Vector2( 0, 48 )
+
+[node name="bg" type="ColorRect" parent="top_bar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="hbox" type="HBoxContainer" parent="top_bar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="empty_space" type="VSeparator" parent="top_bar/hbox"]
+margin_right = 32.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 32, 0 )
+custom_styles/separator = SubResource( 10 )
+
+[node name="server_status" type="Label" parent="top_bar/hbox"]
+editor/display_folded = true
+margin_left = 36.0
+margin_top = 11.0
+margin_right = 125.0
+margin_bottom = 29.0
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Connecting"
+align = 1
+valign = 1
+uppercase = true
+script = SubResource( 11 )
+
+[node name="led" type="Sprite" parent="top_bar/hbox/server_status"]
+position = Vector2( -17.7776, 7.08501 )
+texture = ExtResource( 3 )
+hframes = 3
+
+[node name="sep1" type="VSeparator" parent="top_bar/hbox"]
+margin_left = 129.0
+margin_right = 145.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 16, 0 )
+
+[node name="ctrl_panel" type="Button" parent="top_bar/hbox"]
+margin_left = 149.0
+margin_right = 264.0
+margin_bottom = 40.0
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Control Panel"
+script = SubResource( 12 )
+
+[node name="log_panel" type="Button" parent="top_bar/hbox"]
+margin_left = 268.0
+margin_right = 368.0
+margin_bottom = 40.0
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Login panel"
+script = SubResource( 13 )
+
+[node name="cnt_center" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 48.0
+
+[node name="control_room" type="Control" parent="cnt_center"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+
+[node name="bg" type="ColorRect" parent="cnt_center/control_room"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.2, 0.196078, 0.196078, 1 )
+
+[node name="hbox" type="HBoxContainer" parent="cnt_center/control_room"]
+editor/display_folded = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 8
+
+[node name="vbox" type="VBoxContainer" parent="cnt_center/control_room/hbox"]
+editor/display_folded = true
+margin_right = 116.0
+margin_bottom = 536.0
+
+[node name="connect" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_right = 116.0
+margin_bottom = 37.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Connect"
+script = SubResource( 2 )
+
+[node name="disconnect" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_top = 41.0
+margin_right = 116.0
+margin_bottom = 78.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Disconnect"
+script = SubResource( 8 )
+
+[node name="shut_server" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_top = 82.0
+margin_right = 116.0
+margin_bottom = 119.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Shut Server"
+script = SubResource( 3 )
+
+[node name="req_log" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_top = 123.0
+margin_right = 116.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Request log"
+script = SubResource( 4 )
+
+[node name="restart" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_top = 164.0
+margin_right = 116.0
+margin_bottom = 201.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Restart server"
+script = SubResource( 5 )
+
+[node name="calc_PI" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+editor/display_folded = true
+visible = false
+margin_top = 205.0
+margin_right = 116.0
+margin_bottom = 242.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+disabled = true
+enabled_focus_mode = 0
+text = "calculate PI"
+script = SubResource( 9 )
+
+[node name="PI_val" type="Label" parent="cnt_center/control_room/hbox/vbox/calc_PI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 4.13342
+margin_top = 0.486664
+margin_right = 93.1334
+margin_bottom = 14.4867
+text = "PI val"
+
+[node name="calc_val" type="Label" parent="cnt_center/control_room/hbox/vbox/calc_PI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 4.64679
+margin_top = 16.9136
+margin_right = 93.6468
+margin_bottom = 30.9136
+
+[node name="scrl_log" type="ScrollContainer" parent="cnt_center/control_room/hbox"]
+margin_left = 124.0
+margin_right = 1008.0
+margin_bottom = 536.0
+size_flags_horizontal = 3
+
+[node name="log_list" type="VBoxContainer" parent="cnt_center/control_room/hbox/scrl_log"]
+margin_right = 884.0
+margin_bottom = 536.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 7 )
+
+[node name="login_panel" type="Control" parent="cnt_center"]
+margin_right = 40.0
+margin_bottom = 40.0
