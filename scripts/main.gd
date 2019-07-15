@@ -1,12 +1,16 @@
+#====================#
+#      MAIN.GD       #
+#====================#
+
 extends Control
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
-# Called when the node enters the scene tree for the first time.
+
+
+
+
 func _ready():
-	netwrk.connect_to()
+	netwrk.connect_to_server()
 
 func show_panel(panel_name):
 	for child in $cnt_center.get_children():

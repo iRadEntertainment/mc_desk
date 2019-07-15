@@ -43,7 +43,5 @@ func format_log_entry(log_entry):
 	return (format_str)
 
 #--------------------- other utilities ---------------------
-func n_base():
-	var root=get_tree().get_root()
-	return root.get_child(root.get_child_count()-1)
+
 

@@ -1,73 +1,153 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
-[ext_resource path="res://styles/small_labels.tres" type="Theme" id=2]
+[ext_resource path="res://styles/tool_buttons.tres" type="Theme" id=2]
 [ext_resource path="res://sprites/leds.png" type="Texture" id=3]
 [ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=4]
 
-[sub_resource type="StyleBoxEmpty" id=10]
+[sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="GDScript" id=11]
-script/source = "extends Label
+[sub_resource type="GDScript" id=2]
+script/source = "extends Button
+
 
 func _ready():
 	netwrk.connect(\"network_status_changed\",self,\"_network_status\")
+	netwrk.reconnect_timer.connect(\"timeout\",self,\"_reconnection_attempt\")
+	
+	connect(\"resized\",self,\"_adjust_sprite_pos_on_resize\")
+	$led.frame = 0
+	hint_tooltip = \"Connecting...\"
 
 func _network_status(val):
 	if val:
-		$led.set(\"frame\",1)
-		text = \"Server ON\"
+		$led/anim.play(\"connection_succeed\")
+		hint_tooltip = \"Server ON\"
+		set_process(false)
 	else:
+		$led/anim.stop()
 		$led.set(\"frame\",2)
-		text = \"Server OFF\"
-	"
+		hint_tooltip = \"Server OFF\"
 
-[sub_resource type="GDScript" id=12]
+func _pressed():
+	if netwrk.connecting or netwrk.established:
+		netwrk.disconnect_from_server()
+	else:
+		netwrk.connect_to_server()
+
+func _reconnection_attempt():
+	$led/anim.stop()
+	$led/anim.play(\"connection_attempt\")
+	set_process(true) #for an update on the hint box on how many seconds left for the next attempt
+
+var tim = 0
+func _process(d):
+	if netwrk.reconnect_timer.is_stopped():
+		set_process(false)
+	
+	tim += d
+	if tim > 0.3:
+		tim -= 0.3
+		update_hint_box()
+	
+
+func update_hint_box():
+	if $led/anim.is_playing():
+		hint_tooltip = \"Connecting...\"
+	else:
+		hint_tooltip = \"Retrying connection in %3d seconds...\\nAttempt num. %d\"\\
+		               %[netwrk.reconnect_timer.time_left , netwrk.connection_attempt]
+
+
+func _adjust_sprite_pos_on_resize():
+	$led.position = rect_size/2"
+
+[sub_resource type="Animation" id=3]
+resource_name = "connection_attempt"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.3, 0.4, 0.6, 0.7, 0.9, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 2, 0, 2, 0, 2, 0, 2, 0 ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "connection_succeed"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 1, 0, 1, 0, 1, 0, 1, 0, 1 ]
+}
+
+[sub_resource type="GDScript" id=5]
 script/source = "extends Button
 
 func _pressed():
 	glb.main.show_panel(\"control panel\")"
 
-[sub_resource type="GDScript" id=13]
+[sub_resource type="GDScript" id=6]
 script/source = "extends Button
 
 func _pressed():
 	glb.main.show_panel(\"login panel\")"
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=7]
 script/source = "extends Button
 
 func _pressed():
-	netwrk.connect_to()"
+	netwrk.connect_to_server()"
 
 [sub_resource type="GDScript" id=8]
 script/source = "extends Button
 
 func _pressed():
-	netwrk.disconnect_from()"
+	netwrk.disconnect_from_server()"
 
-[sub_resource type="GDScript" id=3]
+[sub_resource type="GDScript" id=9]
 script/source = "extends Button
 
 func _pressed():
 	if netwrk.established:
 		remote_func.rpc_id(1,\"shut_down_server\")"
 
-[sub_resource type="GDScript" id=4]
-script/source = "extends Button
-
-func _pressed():
-	if netwrk.established:
-		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
-
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=11]
 script/source = "extends Button
 
 func _pressed():
 	if netwrk.established:
 		remote_func.rpc_id(1,\"restart_server\")"
 
-[sub_resource type="GDScript" id=9]
+[sub_resource type="GDScript" id=10]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
+
+[sub_resource type="GDScript" id=14]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		var val = remote_func.rpc_id(1,\"test\")
+		yield(get_tree(),\"idle_frame\")
+		print(val)"
+
+[sub_resource type="GDScript" id=12]
 script/source = "extends Button
 
 var max_iterations = 9000000
@@ -157,14 +237,15 @@ func _count_step():
 	$calc_val.text = str( \"%.16f\"%(val*4) , \" in \" , str(tick_d) , \" msec.\" )
 	step = 0"
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=13]
 script/source = "extends VBoxContainer
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = \"text\"
 
-# Called when the node enters the scene tree for the first time.
+
+var small_fonts_theme = load(\"res://styles/small_labels.tres\")
+
+
+
 func _ready():
 	remote_func.connect(\"server_log_received\",self,\"_update_all_entries\")
 	remote_func.connect(\"server_log_updated\",self,\"_update_with_last_entry\")
@@ -182,33 +263,43 @@ func _update_all_entries(server_log):
 		child.free()
 	#add each entry
 	#--load font theme
-	var small_fonts_theme = load(\"res://styles/small_labels.tres\")
 	for entry in server_log:
-		var new_label = Label.new()
-		
-		var dic = OS.get_datetime_from_unix_time(entry[0])
-		var time = \"%s/%s %02d:%02d:%02d\"%[dic[\"month\"],dic[\"day\"],dic[\"hour\"],dic[\"minute\"],dic[\"second\"]]
-		
-		var user = \"Unknown\"
-		match entry[1]:
-			1:
-				user = \"Server\"
-				new_label.set(\"custom_colors/font_color\",Color.purple)
-			0:
-				user = \"To All\"
-		var msg  = entry[2]
-		
-		new_label.text = \"%s %s - %s\"%[time,user,msg]
-		new_label.theme = small_fonts_theme
-		add_child(new_label)
+		add_entry(entry)
 	
-	#scroll to the last
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
 	yield(get_tree(),\"idle_frame\")
 	$\"..\".scroll_vertical = 70000
 
+
 func _update_with_last_entry(entry):
+	add_entry(entry)
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	$\"..\".scroll_vertical = 70000
+
+
+func add_entry(entry):
+	var new_label = Label.new()
+	var dic = OS.get_datetime_from_unix_time(entry[0])
+	var time = \"%s/%s %02d:%02d:%02d\"%[dic[\"month\"],dic[\"day\"],dic[\"hour\"],dic[\"minute\"],dic[\"second\"]]
 	
-	pass"
+	var user = \"Unknown\"
+	match entry[1]:
+		1:
+			user = \"Server\"
+			new_label.set(\"custom_colors/font_color\",Color.purple)
+		0:
+			user = \"To All\"
+	var msg  = entry[2]
+	
+	new_label.text = \"%s %s - %s\"%[time,user,msg]
+	new_label.theme = small_fonts_theme
+	add_child(new_label)
+
+
+"
 
 [node name="main" type="Control"]
 anchor_right = 1.0
@@ -221,6 +312,7 @@ anchor_bottom = 1.0
 color = Color( 0.988235, 0.913725, 0.0980392, 1 )
 
 [node name="top_bar" type="Control" parent="."]
+editor/display_folded = true
 anchor_right = 1.0
 rect_min_size = Vector2( 0, 48 )
 
@@ -229,6 +321,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="hbox" type="HBoxContainer" parent="top_bar"]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -237,55 +330,57 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="empty_space" type="VSeparator" parent="top_bar/hbox"]
+visible = false
 margin_right = 32.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 32, 0 )
-custom_styles/separator = SubResource( 10 )
+custom_styles/separator = SubResource( 1 )
 
-[node name="server_status" type="Label" parent="top_bar/hbox"]
-editor/display_folded = true
-margin_left = 36.0
-margin_top = 11.0
-margin_right = 125.0
-margin_bottom = 29.0
+[node name="server_conn" type="Button" parent="top_bar/hbox"]
+margin_right = 40.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 40, 40 )
+focus_mode = 0
 theme = ExtResource( 2 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Connecting"
-align = 1
-valign = 1
-uppercase = true
-script = SubResource( 11 )
+enabled_focus_mode = 0
+script = SubResource( 2 )
 
-[node name="led" type="Sprite" parent="top_bar/hbox/server_status"]
-position = Vector2( -17.7776, 7.08501 )
+[node name="led" type="Sprite" parent="top_bar/hbox/server_conn"]
+position = Vector2( 20, 20 )
 texture = ExtResource( 3 )
 hframes = 3
+frame = 1
+
+[node name="anim" type="AnimationPlayer" parent="top_bar/hbox/server_conn/led"]
+anims/connection_attempt = SubResource( 3 )
+anims/connection_succeed = SubResource( 4 )
 
 [node name="sep1" type="VSeparator" parent="top_bar/hbox"]
-margin_left = 129.0
-margin_right = 145.0
+margin_left = 44.0
+margin_right = 60.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 16, 0 )
 
 [node name="ctrl_panel" type="Button" parent="top_bar/hbox"]
-margin_left = 149.0
-margin_right = 264.0
+margin_left = 64.0
+margin_right = 179.0
 margin_bottom = 40.0
 focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
 text = "Control Panel"
-script = SubResource( 12 )
+script = SubResource( 5 )
 
 [node name="log_panel" type="Button" parent="top_bar/hbox"]
-margin_left = 268.0
-margin_right = 368.0
+margin_left = 183.0
+margin_right = 283.0
 margin_bottom = 40.0
 focus_mode = 0
 theme = ExtResource( 4 )
+disabled = true
 enabled_focus_mode = 0
 text = "Login panel"
-script = SubResource( 13 )
+script = SubResource( 6 )
 
 [node name="cnt_center" type="Control" parent="."]
 anchor_right = 1.0
@@ -306,17 +401,16 @@ anchor_bottom = 1.0
 color = Color( 0.2, 0.196078, 0.196078, 1 )
 
 [node name="hbox" type="HBoxContainer" parent="cnt_center/control_room"]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_constants/separation = 8
 
 [node name="vbox" type="VBoxContainer" parent="cnt_center/control_room/hbox"]
-editor/display_folded = true
 margin_right = 116.0
 margin_bottom = 536.0
 
 [node name="connect" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+visible = false
 margin_right = 116.0
 margin_bottom = 37.0
 rect_min_size = Vector2( 0, 32 )
@@ -324,12 +418,12 @@ focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
 text = "Connect"
-script = SubResource( 2 )
+script = SubResource( 7 )
 
 [node name="disconnect" type="Button" parent="cnt_center/control_room/hbox/vbox"]
-margin_top = 41.0
+visible = false
 margin_right = 116.0
-margin_bottom = 78.0
+margin_bottom = 37.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 theme = ExtResource( 4 )
@@ -338,6 +432,27 @@ text = "Disconnect"
 script = SubResource( 8 )
 
 [node name="shut_server" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_right = 116.0
+margin_bottom = 37.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Shut Server"
+script = SubResource( 9 )
+
+[node name="restart" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+margin_top = 41.0
+margin_right = 116.0
+margin_bottom = 78.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+theme = ExtResource( 4 )
+enabled_focus_mode = 0
+text = "Restart server"
+script = SubResource( 11 )
+
+[node name="req_log" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 margin_top = 82.0
 margin_right = 116.0
 margin_bottom = 119.0
@@ -345,10 +460,10 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
-text = "Shut Server"
-script = SubResource( 3 )
+text = "Request log"
+script = SubResource( 10 )
 
-[node name="req_log" type="Button" parent="cnt_center/control_room/hbox/vbox"]
+[node name="test" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 margin_top = 123.0
 margin_right = 116.0
 margin_bottom = 160.0
@@ -356,33 +471,22 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
-text = "Request log"
-script = SubResource( 4 )
-
-[node name="restart" type="Button" parent="cnt_center/control_room/hbox/vbox"]
-margin_top = 164.0
-margin_right = 116.0
-margin_bottom = 201.0
-rect_min_size = Vector2( 0, 32 )
-focus_mode = 0
-theme = ExtResource( 4 )
-enabled_focus_mode = 0
-text = "Restart server"
-script = SubResource( 5 )
+text = "test"
+script = SubResource( 14 )
 
 [node name="calc_PI" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 editor/display_folded = true
 visible = false
-margin_top = 205.0
+margin_top = 123.0
 margin_right = 116.0
-margin_bottom = 242.0
+margin_bottom = 160.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 theme = ExtResource( 4 )
 disabled = true
 enabled_focus_mode = 0
 text = "calculate PI"
-script = SubResource( 9 )
+script = SubResource( 12 )
 
 [node name="PI_val" type="Label" parent="cnt_center/control_room/hbox/vbox/calc_PI"]
 anchor_left = 1.0
@@ -412,7 +516,7 @@ margin_right = 884.0
 margin_bottom = 536.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = SubResource( 7 )
+script = SubResource( 13 )
 
 [node name="login_panel" type="Control" parent="cnt_center"]
 margin_right = 40.0
