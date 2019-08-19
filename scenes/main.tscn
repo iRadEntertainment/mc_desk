@@ -1,9 +1,11 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://styles/tool_buttons.tres" type="Theme" id=2]
 [ext_resource path="res://sprites/leds.png" type="Texture" id=3]
 [ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=4]
+[ext_resource path="res://scripts/login_panel.gd" type="Script" id=5]
+[ext_resource path="res://styles/small_labels.tres" type="Theme" id=6]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
@@ -124,21 +126,21 @@ func _pressed():
 	if netwrk.established:
 		remote_func.rpc_id(1,\"shut_down_server\")"
 
-[sub_resource type="GDScript" id=11]
+[sub_resource type="GDScript" id=10]
 script/source = "extends Button
 
 func _pressed():
 	if netwrk.established:
 		remote_func.rpc_id(1,\"restart_server\")"
 
-[sub_resource type="GDScript" id=10]
+[sub_resource type="GDScript" id=11]
 script/source = "extends Button
 
 func _pressed():
 	if netwrk.established:
 		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
 
-[sub_resource type="GDScript" id=14]
+[sub_resource type="GDScript" id=12]
 script/source = "extends Button
 
 func _pressed():
@@ -147,7 +149,7 @@ func _pressed():
 		yield(get_tree(),\"idle_frame\")
 		print(val)"
 
-[sub_resource type="GDScript" id=12]
+[sub_resource type="GDScript" id=13]
 script/source = "extends Button
 
 var max_iterations = 9000000
@@ -237,7 +239,7 @@ func _count_step():
 	$calc_val.text = str( \"%.16f\"%(val*4) , \" in \" , str(tick_d) , \" msec.\" )
 	step = 0"
 
-[sub_resource type="GDScript" id=13]
+[sub_resource type="GDScript" id=14]
 script/source = "extends VBoxContainer
 
 
@@ -312,7 +314,6 @@ anchor_bottom = 1.0
 color = Color( 0.988235, 0.913725, 0.0980392, 1 )
 
 [node name="top_bar" type="Control" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 rect_min_size = Vector2( 0, 48 )
 
@@ -377,7 +378,6 @@ margin_right = 283.0
 margin_bottom = 40.0
 focus_mode = 0
 theme = ExtResource( 4 )
-disabled = true
 enabled_focus_mode = 0
 text = "Login panel"
 script = SubResource( 6 )
@@ -388,6 +388,8 @@ anchor_bottom = 1.0
 margin_top = 48.0
 
 [node name="control_room" type="Control" parent="cnt_center"]
+editor/display_folded = true
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
@@ -450,7 +452,7 @@ focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
 text = "Restart server"
-script = SubResource( 11 )
+script = SubResource( 10 )
 
 [node name="req_log" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 margin_top = 82.0
@@ -461,7 +463,7 @@ focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
 text = "Request log"
-script = SubResource( 10 )
+script = SubResource( 11 )
 
 [node name="test" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 margin_top = 123.0
@@ -472,7 +474,7 @@ focus_mode = 0
 theme = ExtResource( 4 )
 enabled_focus_mode = 0
 text = "test"
-script = SubResource( 14 )
+script = SubResource( 12 )
 
 [node name="calc_PI" type="Button" parent="cnt_center/control_room/hbox/vbox"]
 editor/display_folded = true
@@ -486,7 +488,7 @@ theme = ExtResource( 4 )
 disabled = true
 enabled_focus_mode = 0
 text = "calculate PI"
-script = SubResource( 12 )
+script = SubResource( 13 )
 
 [node name="PI_val" type="Label" parent="cnt_center/control_room/hbox/vbox/calc_PI"]
 anchor_left = 1.0
@@ -516,8 +518,215 @@ margin_right = 884.0
 margin_bottom = 536.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = SubResource( 13 )
+script = SubResource( 14 )
 
 [node name="login_panel" type="Control" parent="cnt_center"]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 5 )
+
+[node name="login_icons" type="GridContainer" parent="cnt_center/login_panel"]
+editor/display_folded = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -150.0
+margin_top = -223.15
+margin_right = 150.0
+margin_bottom = 76.8503
+columns = 4
+
+[node name="log_01" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_right = 72.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_02" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 76.0
+margin_right = 148.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_03" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 152.0
+margin_right = 224.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_04" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 228.0
+margin_right = 300.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_05" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_top = 76.0
+margin_right = 72.0
+margin_bottom = 148.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_06" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 76.0
+margin_top = 76.0
+margin_right = 148.0
+margin_bottom = 148.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_07" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 152.0
+margin_top = 76.0
+margin_right = 224.0
+margin_bottom = 148.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_08" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 228.0
+margin_top = 76.0
+margin_right = 300.0
+margin_bottom = 148.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_09" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_top = 152.0
+margin_right = 72.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_10" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 76.0
+margin_top = 152.0
+margin_right = 148.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_11" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 152.0
+margin_top = 152.0
+margin_right = 224.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_12" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 228.0
+margin_top = 152.0
+margin_right = 300.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_13" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_top = 228.0
+margin_right = 72.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_14" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 76.0
+margin_top = 228.0
+margin_right = 148.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_15" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 152.0
+margin_top = 228.0
+margin_right = 224.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_16" type="Button" parent="cnt_center/login_panel/login_icons"]
+margin_left = 228.0
+margin_top = 228.0
+margin_right = 300.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="login_outputs" type="GridContainer" parent="cnt_center/login_panel"]
+editor/display_folded = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -226.0
+margin_top = 140.699
+margin_right = 226.0
+margin_bottom = 212.699
+columns = 6
+
+[node name="log_01" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_right = 72.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_02" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_left = 76.0
+margin_right = 148.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_03" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_left = 152.0
+margin_right = 224.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_04" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_left = 228.0
+margin_right = 300.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_05" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_left = 304.0
+margin_right = 376.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="log_06" type="Button" parent="cnt_center/login_panel/login_outputs"]
+margin_left = 380.0
+margin_right = 452.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 72, 72 )
+theme = ExtResource( 2 )
+
+[node name="col_test" type="ColorRect" parent="cnt_center/login_panel"]
+margin_left = 764.657
+margin_top = 422.319
+margin_right = 804.657
+margin_bottom = 462.319
+
+[node name="hexadec" type="Label" parent="cnt_center/login_panel/col_test"]
+margin_left = -4.75507
+margin_top = 44.0975
+margin_right = 45.2449
+margin_bottom = 62.0975
+theme = ExtResource( 6 )
+text = "#00ff00"
+
+[node name="ColorPicker" type="ColorPicker" parent="cnt_center/login_panel"]
+margin_left = 728.0
+margin_top = -23.0
+margin_right = 1018.0
+margin_bottom = 439.0
+color = Color( 0.145098, 0.156863, 0.196078, 1 )
