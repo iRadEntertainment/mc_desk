@@ -7,20 +7,26 @@ extends Control
 onready var tool_sheet = load("res://sprites/login_tools.png")
 onready var mats_sheet = load("res://sprites/login_mats.png")
 
-var icon_color       = Color.white setget _icon_color_changed
-var icon_hover_color = Color.lightgreen
-var icon_press_color = Color.darkgreen
+var icon_color       = Color.blueviolet setget _icon_color_changed
+var icon_hover_color = Color.darkorange
+var icon_press_color = Color.darkkhaki
 
 signal update_icon_color
 
-var code = [0,0,0,0,0,0]
-var code_step = 0
+export var code_lenght = 4
+var        code        = []
+var        code_step   = 0
 
 func _ready():
 	connect_grid_buttons_to_self()
 	populate_login_grid(true)
+	populate_output_grid()
 	reset_output_grid()
 
+
+func populate_output_grid():
+	var output_inst = $login_outputs.get_child(0).duplicate()
+	pass
 
 func connect_grid_buttons_to_self():
 	for i in range (16):
@@ -57,7 +63,7 @@ func populate_login_grid(val):
 		connect("update_icon_color",icon,"set")
 		
 		#--- set numbers
-		if false:
+		if false: #temporarily disabled
 			var num = Label.new()
 			num.theme = load("res://styles/small_labels.tres")
 			num.text  = str(i+1)
@@ -82,7 +88,7 @@ func reset_output_grid():
 			icon.free()
 
 func _login_input_button_pressed(id):
-	code[code_step] = id
+	code.append(id)
 	$col_test.color = code_to_color(code)
 	$col_test/hexadec.text = "#"+code_to_color(code)
 	
@@ -96,16 +102,16 @@ func _login_input_button_pressed(id):
 	icon.vframes = 4
 	icon.hframes = 4
 	icon.frame = id
-	icon.modulate = icon_press_color
+	icon.modulate = icon_color
 	icon.position = square.rect_size/2
 	square.add_child(icon)
 	
 	#--- check which grid to show next tools/materials
 	code_step += 1
 	populate_login_grid(code_step < 2 or code_step > 5)
-	if code_step >= 6:
+	if code_step >= 4:
 		code_step = 0
-		code = [0,0,0,0,0,0]
+		code = []
 #		reset_output_grid()
 
 func code_to_color(code_array):
@@ -124,6 +130,8 @@ func code_to_color(code_array):
 				15: val = "f"
 		
 		_color += val
+	for i in range(code.size(),6):
+		_color += "0"
 	return _color
 
 func _icon_color_changed(val):
