@@ -1,10 +1,10 @@
 [gd_resource type="Theme" load_steps=7 format=2]
 
-[ext_resource path="res://styles/CreteRound-Regular.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://styles/Titillium/Titillium-BoldUpright.otf" type="DynamicFontData" id=1]
 
 [sub_resource type="StyleBoxFlat" id=1]
-content_margin_left = 8.0
-content_margin_right = 8.0
+content_margin_left = 16.0
+content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
 bg_color = Color( 0.2, 0.196078, 0.196078, 0.215686 )
@@ -21,44 +21,34 @@ corner_radius_bottom_left = 4
 corner_detail = 4
 
 [sub_resource type="StyleBoxFlat" id=2]
-content_margin_left = 8.0
-content_margin_right = 8.0
+content_margin_left = 16.0
+content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
-bg_color = Color( 0.988235, 0.913725, 0.0980392, 1 )
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color( 0.2, 0.196078, 0.196078, 1 )
-border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 4
-
-[sub_resource type="StyleBoxFlat" id=3]
-content_margin_left = 8.0
-content_margin_right = 8.0
-content_margin_top = 8.0
-content_margin_bottom = 8.0
-bg_color = Color( 1, 1, 1, 0.8 )
+bg_color = Color( 0.988235, 0.913725, 0.0980392, 0.376471 )
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color( 0.2, 0.196078, 0.196078, 1 )
 border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 corner_detail = 4
 
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 1, 1, 1, 0.8 )
+border_color = Color( 0.2, 0.196078, 0.196078, 1 )
+border_blend = true
+corner_detail = 4
+shadow_color = Color( 0, 0, 0, 0.14902 )
+shadow_size = 2
+
 [sub_resource type="StyleBoxFlat" id=4]
-content_margin_left = 8.0
-content_margin_right = 8.0
+content_margin_left = 16.0
+content_margin_right = 16.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
 bg_color = Color( 1, 1, 1, 1 )
@@ -68,10 +58,6 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color( 0.988235, 0.913725, 0.0980392, 1 )
 border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 corner_detail = 4
 
 [sub_resource type="DynamicFont" id=5]

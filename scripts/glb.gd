@@ -17,8 +17,10 @@ var current_tab = 1
 
 #nodes
 onready var main             = $"/root/main"
-onready var pnl_control_room = $"/root/main/cnt_center/control_room"
-onready var pnl_login        = $"/root/main/cnt_center/login_panel"
+onready var pnl_control_room = $"/root/main/vbox/cnt_center/control_room"
+onready var pnl_login        = $"/root/main/vbox/cnt_center/login_panel"
+onready var pnl_finance      = $"/root/main/vbox/cnt_center/finance_panel"
+onready var pnl_tasks        = $"/root/main/vbox/cnt_center/tasks_panel"
 
 #--------------------- console utilities ---------------------
 func log_print(string):

@@ -33,6 +33,9 @@ func date(date_format = "DD-MM-YY"):
 	
 	return date_format
 
+func unix():
+	var unix_diz = {"year":_year,"month":_month,"day":_day,"hour":0,"minute":0,"second":0}
+	return OS.get_unix_time_from_datetime(unix_diz)
 
 # 1: Mon
 # ...

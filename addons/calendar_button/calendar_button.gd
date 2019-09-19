@@ -3,7 +3,7 @@ extends EditorPlugin
 
 # See calendar_script for info
 func _enter_tree():
-	add_custom_type("CalendarButton", "TextureButton", preload("calendar_script.gd"), preload("icon.png"))
+	add_custom_type("CalendarButton", "TextureButton", preload("res://addons/calendar_button/calendar_script.gd"), preload("icon.png"))
 	pass
 
 func _exit_tree():

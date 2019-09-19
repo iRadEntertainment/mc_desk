@@ -30,6 +30,10 @@ remote_func="*res://scripts/remote_func.gd"
 
 gdscript/warnings/enable=false
 
+[editor_plugins]
+
+enabled=PoolStringArray( "calendar_button" )
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
