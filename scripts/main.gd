@@ -12,6 +12,14 @@ extends Control
 func _ready():
 	netwrk.connect_to_server()
 
+
+func popup_notification(content = null, title = null, duration = 2):
+	var popup_notif = load("res://instances/notification.tscn").instance()
+	popup_notif.title    = title
+	popup_notif.content  = content
+	popup_notif.duration = float(duration)
+	add_child(popup_notif)
+
 func show_panel(panel_name):
 	for child in $vbox/cnt_center.get_children():
 		child.hide()

@@ -1,113 +1,176 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://styles/finance_list.tres" type="Theme" id=1]
 [ext_resource path="res://scripts/balance_voice.gd" type="Script" id=2]
-[ext_resource path="res://styles/Titillium/Titillium-BoldUpright.otf" type="DynamicFontData" id=3]
+[ext_resource path="res://sprites/btn_modifica.png" type="Texture" id=3]
+[ext_resource path="res://sprites/btn_annulla_hover.png" type="Texture" id=4]
+[ext_resource path="res://sprites/smb_ok_small.png" type="Texture" id=5]
+[ext_resource path="res://styles/Titillium/Titillium-BoldUpright.otf" type="DynamicFontData" id=6]
+[ext_resource path="res://sprites/balance_card.png" type="Texture" id=7]
+[ext_resource path="res://sprites/balance_cash.png" type="Texture" id=8]
+[ext_resource path="res://sprites/balance_mobile.png" type="Texture" id=9]
+[ext_resource path="res://sprites/btn_elimina.png" type="Texture" id=10]
 
-[sub_resource type="DynamicFont" id=1]
-size = 19
-font_data = ExtResource( 3 )
+[sub_resource type="GDScript" id=1]
+script/source = "extends LineEdit
+
+var negative_color = Color.darkred
+
+func _ready():
+	connect(\"text_entered\",self,\"_on_text_entered\")
+
+func _on_text_entered(text):
+	var text_to_float = float(text)
+	if text_to_float < 0.0: set(\"custom_colors/font_color\", negative_color)
+	else:                   set(\"custom_colors/font_color\", Color.black)"
+
+[sub_resource type="DynamicFont" id=2]
+size = 17
+font_data = ExtResource( 6 )
 
 [node name="balance_voice" type="PanelContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -830.0
+margin_right = -66.0
 margin_bottom = -572.0
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
 
+[node name="odd_overlay" type="ColorRect" parent="."]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 956.0
+margin_bottom = 27.0
+color = Color( 0, 0, 0, 0.0588235 )
+
 [node name="hbox" type="HBoxContainer" parent="."]
 margin_left = 2.0
 margin_top = 2.0
-margin_right = 552.0
-margin_bottom = 26.0
+margin_right = 956.0
+margin_bottom = 27.0
 custom_constants/separation = 4
 __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="id" type="LineEdit" parent="hbox"]
-margin_right = 56.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 24 )
+[node name="edit" type="TextureButton" parent="hbox"]
+margin_right = 25.0
+margin_bottom = 25.0
 theme = ExtResource( 1 )
+texture_normal = ExtResource( 3 )
+
+[node name="cancel" type="TextureButton" parent="hbox"]
+margin_left = 29.0
+margin_right = 54.0
+margin_bottom = 25.0
+theme = ExtResource( 1 )
+texture_normal = ExtResource( 4 )
+
+[node name="save" type="TextureButton" parent="hbox"]
+margin_left = 58.0
+margin_right = 73.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 15, 25 )
+theme = ExtResource( 1 )
+texture_normal = ExtResource( 5 )
+expand = true
+stretch_mode = 5
+
+[node name="id" type="Label" parent="hbox"]
+margin_left = 77.0
+margin_right = 127.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 50, 24 )
+rect_clip_content = true
+size_flags_horizontal = 0
+theme = ExtResource( 1 )
+text = "id"
 align = 2
-placeholder_text = "id"
-caret_blink = true
+valign = 1
 
 [node name="date" type="LineEdit" parent="hbox"]
-margin_left = 60.0
-margin_right = 116.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 24 )
+margin_left = 131.0
+margin_right = 216.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 85, 24 )
 theme = ExtResource( 1 )
+text = "12/05/2017"
 align = 1
 placeholder_text = "date"
 caret_blink = true
 
 [node name="fakt" type="LineEdit" parent="hbox"]
-margin_left = 120.0
-margin_right = 176.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 24 )
+margin_left = 220.0
+margin_right = 280.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 60, 24 )
 theme = ExtResource( 1 )
 align = 2
 placeholder_text = "faktura"
 caret_blink = true
 
 [node name="descr" type="LineEdit" parent="hbox"]
-margin_left = 180.0
-margin_right = 236.0
-margin_bottom = 24.0
+margin_left = 284.0
+margin_right = 660.0
+margin_bottom = 25.0
 rect_min_size = Vector2( 0, 24 )
 size_flags_horizontal = 3
 theme = ExtResource( 1 )
+text = "Maronna"
+editable = false
 placeholder_text = "description"
 caret_blink = true
 
 [node name="price" type="LineEdit" parent="hbox"]
-margin_left = 240.0
-margin_right = 296.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 24 )
+margin_left = 664.0
+margin_right = 764.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 100, 24 )
 theme = ExtResource( 1 )
+custom_colors/font_color_selected = Color( 0.866667, 0.12549, 0.12549, 1 )
+custom_colors/font_color = Color( 0.176471, 0.14902, 0.517647, 1 )
+custom_colors/clear_button_color = Color( 0.866667, 0.0666667, 0.0666667, 1 )
 align = 2
+clear_button_enabled = true
 placeholder_text = "0,00"
 caret_blink = true
+script = SubResource( 1 )
 
-[node name="eur" type="Label" parent="hbox"]
-margin_left = 300.0
-margin_top = 2.0
-margin_right = 311.0
-margin_bottom = 22.0
-custom_fonts/font = SubResource( 1 )
-text = "€"
+[node name="kronas" type="Label" parent="hbox"]
+margin_left = 768.0
+margin_top = 3.0
+margin_right = 782.0
+margin_bottom = 21.0
+custom_fonts/font = SubResource( 2 )
+text = "kr"
 valign = 1
 
-[node name="edit" type="Button" parent="hbox"]
-margin_left = 315.0
-margin_right = 360.0
-margin_bottom = 24.0
-theme = ExtResource( 1 )
-text = "edit"
+[node name="opt_pending" type="OptionButton" parent="hbox"]
+margin_left = 786.0
+margin_right = 866.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 80, 0 )
+shortcut_in_tooltip = false
+text = "pending"
+flat = true
+align = 1
+items = [ "payed", null, false, 0, null, "pending", null, false, 1, null ]
+selected = 1
 
-[node name="save" type="Button" parent="hbox"]
-margin_left = 364.0
-margin_right = 415.0
-margin_bottom = 24.0
-theme = ExtResource( 1 )
-text = "save"
+[node name="opt_cash" type="OptionButton" parent="hbox"]
+margin_left = 870.0
+margin_right = 925.0
+margin_bottom = 25.0
+shortcut_in_tooltip = false
+icon = ExtResource( 7 )
+flat = true
+align = 1
+items = [ "", ExtResource( 8 ), false, 0, null, "", ExtResource( 7 ), false, 1, null, "", ExtResource( 9 ), false, 2, null ]
+selected = 1
 
-[node name="cancel" type="Button" parent="hbox"]
-margin_left = 419.0
-margin_right = 483.0
-margin_bottom = 24.0
+[node name="delete" type="TextureButton" parent="hbox"]
+margin_left = 929.0
+margin_right = 954.0
+margin_bottom = 25.0
 theme = ExtResource( 1 )
-text = "cancel"
-
-[node name="delete" type="Button" parent="hbox"]
-margin_left = 487.0
-margin_right = 550.0
-margin_bottom = 24.0
-theme = ExtResource( 1 )
-text = "delete"
+texture_normal = ExtResource( 10 )
