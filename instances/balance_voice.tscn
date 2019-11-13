@@ -111,7 +111,7 @@ caret_blink = true
 
 [node name="descr" type="LineEdit" parent="hbox"]
 margin_left = 284.0
-margin_right = 660.0
+margin_right = 511.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 0, 24 )
 size_flags_horizontal = 3
@@ -122,8 +122,8 @@ placeholder_text = "description"
 caret_blink = true
 
 [node name="price" type="LineEdit" parent="hbox"]
-margin_left = 664.0
-margin_right = 764.0
+margin_left = 515.0
+margin_right = 615.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 100, 24 )
 theme = ExtResource( 1 )
@@ -137,12 +137,36 @@ caret_blink = true
 script = SubResource( 1 )
 
 [node name="kronas" type="Label" parent="hbox"]
-margin_left = 768.0
+margin_left = 619.0
+margin_top = 3.0
+margin_right = 633.0
+margin_bottom = 21.0
+custom_fonts/font = SubResource( 2 )
+text = "kr"
+valign = 1
+
+[node name="vat" type="LineEdit" parent="hbox"]
+margin_left = 637.0
+margin_right = 737.0
+margin_bottom = 25.0
+rect_min_size = Vector2( 100, 24 )
+theme = ExtResource( 1 )
+custom_colors/font_color_selected = Color( 0.866667, 0.12549, 0.12549, 1 )
+custom_colors/font_color = Color( 0.176471, 0.14902, 0.517647, 1 )
+custom_colors/clear_button_color = Color( 0.866667, 0.0666667, 0.0666667, 1 )
+align = 2
+clear_button_enabled = true
+placeholder_text = "0,00"
+caret_blink = true
+script = SubResource( 1 )
+
+[node name="moms" type="Label" parent="hbox"]
+margin_left = 741.0
 margin_top = 3.0
 margin_right = 782.0
 margin_bottom = 21.0
 custom_fonts/font = SubResource( 2 )
-text = "kr"
+text = "moms"
 valign = 1
 
 [node name="opt_pending" type="OptionButton" parent="hbox"]
