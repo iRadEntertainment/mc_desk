@@ -5,7 +5,7 @@
 extends Node
 
 #user
-var user_name = null
+var user_name    = null
 
 #log
 var log_max_size = 1000

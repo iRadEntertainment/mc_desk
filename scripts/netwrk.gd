@@ -17,7 +17,8 @@ var   connection_attempt = 0
 #network
 signal network_status_changed
 
-var established = false setget _set_established
+var fl_internet_connection = false
+var established = false setget _set_established, _get_established
 var connecting  = false
 var logged_in   = false
 
@@ -27,6 +28,9 @@ var net_id      = -1
 
 #============================ INIT ==============================
 func _ready():
+	#check connectivity
+	add_child(http)
+	test_internet_connectivity()
 	#connect network signals
 	get_tree().multiplayer.connect("network_peer_packet",self,"_on_packets_received")
 	get_tree().connect("connected_to_server",self,"_on_connection_succeeded")
@@ -74,7 +78,8 @@ func _attempt_reconnection(): #on reconnect_timer "timeout"
 	if connection_attempt%CONNECTION_ATTEMPTS_STEPS == 0 and reconnect_timer.wait_time < 300:
 		reconnect_timer.wait_time *= 2
 	
-	host.close_connection()
+	if host.get_connection_status() != NetworkedMultiplayerENet.CONNECTION_DISCONNECTED:
+		host.close_connection()
 	connect_to_server()
 
 #----------------- network signal functions ---------------------
@@ -142,3 +147,25 @@ func set_timer_for_reconnect():
 func _set_established(val):
 	established = val
 	emit_signal("network_status_changed",val)
+
+func _get_established():
+	if (get_tree().get_network_peer()):
+		if get_tree().get_network_peer().get_connection_status() == 2:
+			if !established: established = true
+		else:
+			if  established: established = false
+	else:
+		if  established: established = false
+	return established
+
+#------------------- check internet connection --------------------------
+var http = HTTPRequest.new()
+
+func test_internet_connectivity():
+	http.cancel_request()
+	http.request("https://example.com")
+	http.connect("request_completed",self,"_HTTP_test_completed")
+
+func _HTTP_test_completed( result, response_code, headers, body):
+	fl_internet_connection = result == HTTPRequest.RESULT_SUCCESS
+

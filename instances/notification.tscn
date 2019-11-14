@@ -69,3 +69,7 @@ autowrap = true
 [node name="tmr" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
+
+[node name="tmr_min_duration" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true
