@@ -4,7 +4,7 @@
 
 extends Control
 
-
+const tag = "Balance"
 
 
 

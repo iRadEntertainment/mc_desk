@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+var tag : String
+
+func _pressed():
+	glb.main.show_panel(tag)
+"
+
+[node name="tab_button" type="Button" groups=[
+"theme_nodes",
+]]
+margin_right = 81.0
+margin_bottom = 40.0
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Button"
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

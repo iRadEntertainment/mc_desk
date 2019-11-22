@@ -4,6 +4,8 @@
 
 extends Control
 
+const tag = "Login panel"
+
 onready var tool_sheet = load("res://sprites/login_tools.png")
 onready var mats_sheet = load("res://sprites/login_mats.png")
 

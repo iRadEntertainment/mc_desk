@@ -1,0 +1,424 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://sprites/MC Logo.png" type="Texture" id=3]
+[ext_resource path="res://scripts/control_room.gd" type="Script" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+func _pressed():
+	netwrk.connect_to_server()"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Button
+
+func _pressed():
+	netwrk.disconnect_from_server()"
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"shut_down_server\")
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"restart_server\")"
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Button
+
+func _pressed():
+	if netwrk.established:
+		var val = remote_func.rpc_id(1,\"test\")
+		yield(get_tree(),\"idle_frame\")
+		print(val)
+	else:
+		print(\"Network not ready\")
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends Button
+
+var max_iterations = 9000000
+var step = 0
+var val = 0
+
+func _ready():
+	$PI_val.text = str( \"%.16f\"%PI )
+
+
+func _pressed():
+	_count_step()
+	val = 0
+
+func _count_step():
+	var adding_frac = 1.0
+	var tick_start = OS.get_ticks_msec()
+	var tick_last  = tick_start
+	while step < max_iterations:
+		adding_frac = 1.0/(1+2*step) # * (-1 + 2*int(step%2 == 0) )
+		if step%2 != 0:
+			adding_frac *= -1
+		val += adding_frac
+		if step%50000 == 0:
+			var tick_elapsed = OS.get_ticks_msec()
+			var tick_d = tick_elapsed - tick_last
+			tick_last = tick_elapsed
+			print(\"tick: \",str(tick_d),\" - step: \",step, \" - val: \", str(\"%.16f\"%(val*4) ))
+		step += 1
+	
+	var tick_elapsed = OS.get_ticks_msec()
+	var tick_d = tick_elapsed - tick_start
+	
+	print(\"step: \",step, \" - val: \", str(\"%.16f\"%(val*4) ) )
+	$calc_val.text = str( \"%.16f\"%(val*4) , \" in \" , str(tick_d) , \" msec.\" )
+	step = 0
+"
+
+[sub_resource type="Shader" id=8]
+code = "shader_type canvas_item;
+
+uniform float first_angle  : hint_range (-180.0 , 180.0, 2.0);
+uniform float last_angle   : hint_range (-180.0 , 180.0, 2.0);
+uniform float smooth_angle : hint_range (   0.0 ,  60.0, 1.0) = 15.0;
+uniform float rotate       : hint_range (-180.0 , 180.0, 5.0) = 60.0;
+
+vec2 rotateUV(vec2 uv, float rotation) {
+    float mid = 0.0;
+    return vec2(cos(rotation) * (uv.x - mid) + sin(rotation) * (uv.y - mid) + mid,
+                cos(rotation) * (uv.y - mid) - sin(rotation) * (uv.x - mid) + mid);
+}
+
+void fragment () {
+	vec2 centerUV = UV*2.0-1.0;
+	vec2 rotatedUV = rotateUV(centerUV, radians(rotate));
+	float angle = degrees(atan(rotatedUV.y,rotatedUV.x));
+	float alpha;
+	if (angle >= first_angle && angle <= last_angle ) {
+		alpha = 1.0;
+	} else if (angle < first_angle) {
+		alpha = max(0.0 , (smooth_angle-abs(angle-first_angle))/smooth_angle );
+	} else if (angle > last_angle) {
+		alpha = max(0.0 , (smooth_angle-abs(angle-last_angle))/smooth_angle );
+	}
+	COLOR = texture(TEXTURE,UV);
+	COLOR.a = min(alpha,COLOR.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = SubResource( 8 )
+shader_param/first_angle = -180.0
+shader_param/last_angle = 180.0
+shader_param/smooth_angle = 15.0
+shader_param/rotate = 61.8854
+
+[sub_resource type="GDScript" id=10]
+script/source = "extends TextureRect
+
+var speed = 200
+
+var t = float(0.0)
+func _process(delta):
+	t -= delta
+	material.set_shader_param(\"rotate\", t*speed)
+	t = fmod(t,360)"
+
+[sub_resource type="Animation" id=11]
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:material:shader_param/first_angle")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5 ),
+"transitions": PoolRealArray( 3.73213, 1.93187 ),
+"update": 0,
+"values": [ -180.0, 180.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:material:shader_param/last_angle")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 4.43828, 0.535887 ),
+"update": 0,
+"values": [ 180.0, -180.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:material:shader_param/rotate")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 90.0 ]
+}
+
+[sub_resource type="StyleBoxFlat" id=12]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0, 0, 0, 0.662745 )
+
+[sub_resource type="GDScript" id=13]
+script/source = "extends VBoxContainer
+
+
+
+var small_fonts_theme = load(\"res://styles/small_labels.tres\")
+
+
+
+func _ready():
+	remote_func.connect(\"server_log_received\",self,\"_update_all_entries\")
+	remote_func.connect(\"server_log_updated\",self,\"_update_with_last_entry\")
+	retrieve_server_log()
+
+
+func retrieve_server_log():
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())
+		#rpc(\"send_server_log\") emit signal \"server_log_received\"
+
+func _update_all_entries(server_log):
+	#clear all childs
+	for child in get_children():
+		child.free()
+	#add each entry
+	#--load font theme
+	for entry in server_log:
+		add_entry(entry)
+	
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	$\"..\".scroll_vertical = 70000
+
+
+func _update_with_last_entry(entry):
+	add_entry(entry)
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	yield(get_tree(),\"idle_frame\")
+	$\"..\".scroll_vertical = 70000
+
+
+func add_entry(entry):
+	print(entry)
+	var new_label = Label.new()
+	var dic = {\"year\":0,\"month\":0,\"day\":0,\"hour\":0,\"minute\":0,\"second\":0}
+	if typeof(entry[0]) == TYPE_INT:
+		dic = OS.get_datetime_from_unix_time(entry[0])
+	var time = \"%s/%s %02d:%02d:%02d\"%[dic[\"month\"],dic[\"day\"],dic[\"hour\"],dic[\"minute\"],dic[\"second\"]]
+	
+	var user = \"Unknown\"
+	match entry[1]:
+		1:
+			user = \"Server\"
+			new_label.set(\"custom_colors/font_color\",Color.purple)
+		0:
+			user = \"To All\"
+	var msg  = entry[2]
+	
+	new_label.text = \"%s %s - %s\"%[time,user,msg]
+	new_label.theme = small_fonts_theme
+	add_child(new_label)
+
+
+"
+
+[node name="control_room" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bg" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.866667, 0.0666667, 0.0666667, 0.0941176 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hbox" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+custom_constants/separation = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="pnl1" type="PanelContainer" parent="hbox"]
+margin_right = 166.0
+margin_bottom = 238.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="vbox" type="VBoxContainer" parent="hbox/pnl1"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 159.0
+margin_bottom = 231.0
+
+[node name="connect" type="Button" parent="hbox/pnl1/vbox"]
+visible = false
+margin_right = 152.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Connect"
+script = SubResource( 1 )
+
+[node name="disconnect" type="Button" parent="hbox/pnl1/vbox"]
+visible = false
+margin_right = 152.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Disconnect"
+script = SubResource( 2 )
+
+[node name="shut_server" type="Button" parent="hbox/pnl1/vbox"]
+margin_right = 152.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Shut Server"
+script = SubResource( 3 )
+
+[node name="restart" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 36.0
+margin_right = 152.0
+margin_bottom = 68.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Restart server"
+script = SubResource( 4 )
+
+[node name="req_log" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 72.0
+margin_right = 152.0
+margin_bottom = 104.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Request log"
+script = SubResource( 5 )
+
+[node name="test" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 108.0
+margin_right = 152.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "test"
+script = SubResource( 6 )
+
+[node name="calc_PI" type="Button" parent="hbox/pnl1/vbox"]
+visible = false
+margin_top = 216.0
+margin_right = 152.0
+margin_bottom = 248.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "calculate PI"
+script = SubResource( 7 )
+
+[node name="PI_val" type="Label" parent="hbox/pnl1/vbox/calc_PI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 4.13342
+margin_top = 0.486664
+margin_right = 93.1334
+margin_bottom = 14.4867
+text = "PI val"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="calc_val" type="Label" parent="hbox/pnl1/vbox/calc_PI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 4.64679
+margin_top = 16.9136
+margin_right = 93.6468
+margin_bottom = 30.9136
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="loading rect" type="TextureRect" parent="hbox/pnl1/vbox"]
+material = SubResource( 9 )
+margin_top = 144.0
+margin_right = 152.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 0, 80 )
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+script = SubResource( 10 )
+
+[node name="anim" type="AnimationPlayer" parent="hbox/pnl1/vbox/loading rect"]
+autoplay = "loading"
+anims/loading = SubResource( 11 )
+
+[node name="pnl2" type="PanelContainer" parent="hbox"]
+margin_left = 174.0
+margin_right = 1008.0
+margin_bottom = 584.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+custom_styles/panel = SubResource( 12 )
+
+[node name="scrl_log" type="ScrollContainer" parent="hbox/pnl2"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 826.0
+margin_bottom = 576.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="log_list" type="VBoxContainer" parent="hbox/pnl2/scrl_log"]
+margin_right = 818.0
+margin_bottom = 568.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = SubResource( 13 )

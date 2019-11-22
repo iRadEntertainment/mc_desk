@@ -16,6 +16,7 @@ var   connection_attempt = 0
 
 #network
 signal network_status_changed
+signal internet_status_changed
 
 var fl_internet_connection = false
 var established = false setget _set_established, _get_established
@@ -31,6 +32,7 @@ func _ready():
 	#check connectivity
 	add_child(http)
 	test_internet_connectivity()
+	http.connect("request_completed",self,"_HTTP_test_completed")
 	#connect network signals
 	get_tree().multiplayer.connect("network_peer_packet",self,"_on_packets_received")
 	get_tree().connect("connected_to_server",self,"_on_connection_succeeded")
@@ -114,6 +116,7 @@ func _on_packets_received(id,packet):
 	pass
 
 func _on_user_connected(id):
+	if !get_tree().is_network_server(): return
 	if id==1: return
 	glb.log_print("NETWORK: user connected %s, IP: %s"%[id,host.get_peer_address(id)])
 
@@ -159,13 +162,17 @@ func _get_established():
 	return established
 
 #------------------- check internet connection --------------------------
-var http = HTTPRequest.new()
 
+var http = HTTPRequest.new()
 func test_internet_connectivity():
 	http.cancel_request()
 	http.request("https://example.com")
-	http.connect("request_completed",self,"_HTTP_test_completed")
+	print("Testing Internet connection. Previou status: %s"%fl_internet_connection)
+	fl_internet_connection = false
+	emit_signal("internet_status_changed",fl_internet_connection)
 
 func _HTTP_test_completed( result, response_code, headers, body):
 	fl_internet_connection = result == HTTPRequest.RESULT_SUCCESS
+	print("Internet connection tested. Result: %s"%fl_internet_connection)
+	emit_signal("internet_status_changed",fl_internet_connection)
 

@@ -1,0 +1,334 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scripts/settings.gd" type="Script" id=1]
+[ext_resource path="res://styles/palettes/pal1.jpg" type="Texture" id=2]
+[ext_resource path="res://styles/tool_buttons.tres" type="Theme" id=3]
+[ext_resource path="res://styles/palettes/pal2.jpg" type="Texture" id=4]
+[ext_resource path="res://styles/palettes/pal3.jpg" type="Texture" id=5]
+[ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=6]
+
+[sub_resource type="GDScript" id=5]
+script/source = "extends Button
+
+func _pressed():
+	OS.window_fullscreen = !OS.window_fullscreen
+"
+
+[sub_resource type="GDScript" id=6]
+script/source = "extends Button
+
+const pal = [\"010010\",\"63185d\",\"fff641\",\"b9c7ec\",\"5e8254\"]
+
+func _pressed():
+	glb.color_pal = pal
+
+func _ready():
+	for i in range(5):
+		get_node(\"vb/hb/%s\"%(i+1)).color = pal[i]
+"
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends Button
+
+const pal = [\"000000\",\"5e5e28\",\"acaf82\",\"dac26a\",\"d7c20f\"]
+
+func _pressed():
+	glb.color_pal = pal
+
+func _ready():
+	for i in range(5):
+		get_node(\"vb/hb/%s\"%(i+1)).color = pal[i]
+"
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Button
+
+const pal = [\"183114\",\"446129\",\"92a65f\",\"f3f4d3\",\"dcde9f\"]
+
+func _pressed():
+	glb.color_pal = pal
+
+func _ready():
+	for i in range(5):
+		get_node(\"vb/hb/%s\"%(i+1)).color = pal[i]
+"
+
+[node name="settings" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bg" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.988235, 0.913725, 0.0980392, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="opt_hbox" type="HBoxContainer" parent="."]
+anchor_left = 0.032
+anchor_top = 0.062
+anchor_right = 0.959047
+anchor_bottom = 0.183
+margin_left = 0.231998
+margin_top = -0.200001
+margin_right = -0.0640259
+margin_bottom = 0.199989
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="fullscreen" type="Button" parent="opt_hbox"]
+margin_right = 96.0
+margin_bottom = 72.0
+theme = ExtResource( 6 )
+text = "Fullscreen"
+script = SubResource( 5 )
+
+[node name="col_settings" type="GridContainer" parent="."]
+anchor_left = 0.031
+anchor_top = 0.212
+anchor_right = 0.961
+anchor_bottom = 0.917
+margin_left = 0.255999
+margin_top = -0.199997
+margin_right = -0.0640259
+margin_bottom = -0.200012
+columns = 3
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="pal1" type="Button" parent="col_settings"]
+margin_right = 314.0
+margin_bottom = 423.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 3 )
+script = SubResource( 6 )
+
+[node name="vb" type="VBoxContainer" parent="col_settings/pal1"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="thumb" type="TextureRect" parent="col_settings/pal1/vb"]
+margin_right = 298.0
+margin_bottom = 355.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hb" type="HBoxContainer" parent="col_settings/pal1/vb"]
+margin_top = 359.0
+margin_right = 298.0
+margin_bottom = 407.0
+rect_min_size = Vector2( 0, 48 )
+custom_constants/separation = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="1" type="ColorRect" parent="col_settings/pal1/vb/hb"]
+margin_right = 56.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="2" type="ColorRect" parent="col_settings/pal1/vb/hb"]
+margin_left = 60.0
+margin_right = 116.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="3" type="ColorRect" parent="col_settings/pal1/vb/hb"]
+margin_left = 120.0
+margin_right = 176.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="4" type="ColorRect" parent="col_settings/pal1/vb/hb"]
+margin_left = 180.0
+margin_right = 236.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="5" type="ColorRect" parent="col_settings/pal1/vb/hb"]
+margin_left = 240.0
+margin_right = 298.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="pal2" type="Button" parent="col_settings"]
+margin_left = 318.0
+margin_right = 632.0
+margin_bottom = 423.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 3 )
+script = SubResource( 7 )
+
+[node name="vb" type="VBoxContainer" parent="col_settings/pal2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="thumb" type="TextureRect" parent="col_settings/pal2/vb"]
+margin_right = 298.0
+margin_bottom = 355.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hb" type="HBoxContainer" parent="col_settings/pal2/vb"]
+margin_top = 359.0
+margin_right = 298.0
+margin_bottom = 407.0
+rect_min_size = Vector2( 0, 48 )
+custom_constants/separation = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="1" type="ColorRect" parent="col_settings/pal2/vb/hb"]
+margin_right = 56.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="2" type="ColorRect" parent="col_settings/pal2/vb/hb"]
+margin_left = 60.0
+margin_right = 116.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="3" type="ColorRect" parent="col_settings/pal2/vb/hb"]
+margin_left = 120.0
+margin_right = 176.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="4" type="ColorRect" parent="col_settings/pal2/vb/hb"]
+margin_left = 180.0
+margin_right = 236.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="5" type="ColorRect" parent="col_settings/pal2/vb/hb"]
+margin_left = 240.0
+margin_right = 298.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="pal3" type="Button" parent="col_settings"]
+margin_left = 636.0
+margin_right = 950.0
+margin_bottom = 423.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 3 )
+script = SubResource( 4 )
+
+[node name="vb" type="VBoxContainer" parent="col_settings/pal3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -8.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="thumb" type="TextureRect" parent="col_settings/pal3/vb"]
+margin_right = 298.0
+margin_bottom = 355.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource( 5 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="hb" type="HBoxContainer" parent="col_settings/pal3/vb"]
+margin_top = 359.0
+margin_right = 298.0
+margin_bottom = 407.0
+rect_min_size = Vector2( 0, 48 )
+custom_constants/separation = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="1" type="ColorRect" parent="col_settings/pal3/vb/hb"]
+margin_right = 56.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="2" type="ColorRect" parent="col_settings/pal3/vb/hb"]
+margin_left = 60.0
+margin_right = 116.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="3" type="ColorRect" parent="col_settings/pal3/vb/hb"]
+margin_left = 120.0
+margin_right = 176.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="4" type="ColorRect" parent="col_settings/pal3/vb/hb"]
+margin_left = 180.0
+margin_right = 236.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="5" type="ColorRect" parent="col_settings/pal3/vb/hb"]
+margin_left = 240.0
+margin_right = 298.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+size_flags_vertical = 3

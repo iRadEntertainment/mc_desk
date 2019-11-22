@@ -26,6 +26,9 @@ margin_top = -0.663414
 margin_bottom = -0.663391
 mouse_filter = 2
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="panel" type="PanelContainer" parent="."]
 margin_left = 337.0

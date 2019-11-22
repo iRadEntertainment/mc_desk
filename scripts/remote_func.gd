@@ -19,4 +19,4 @@ remote func receive_last_server_entry(entry):
 
 remote func return_user_name():
 	return glb.user_name
-	
+
