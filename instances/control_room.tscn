@@ -1,5 +1,6 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=22 format=2]
 
+[ext_resource path="res://styles/small_labels.tres" type="Theme" id=1]
 [ext_resource path="res://sprites/MC Logo.png" type="Texture" id=3]
 [ext_resource path="res://scripts/control_room.gd" type="Script" id=4]
 
@@ -34,10 +35,72 @@ func _pressed():
 script/source = "extends Button
 
 func _pressed():
+	$\"../../../..\".show_panel(2)
 	if netwrk.established:
-		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())"
+		remote_func.rpc_id(1,\"send_server_log\",get_tree().get_network_unique_id())
+"
 
 [sub_resource type="GDScript" id=6]
+script/source = "extends Button
+
+func _pressed():
+	hide()
+	$\"../update_rem_f\".show()
+	$\"../edit_serv\".show()
+	$\"../update_serv\".hide()
+	$\"../../../..\".show_panel(3)
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_file_content\",\"remote_func\")
+"
+
+[sub_resource type="GDScript" id=16]
+script/source = "extends Button
+
+func _pressed():
+	hide()
+	$\"../update_serv\".show()
+	$\"../edit_rem_f\".show()
+	$\"../update_rem_f\".hide()
+	$\"../../../..\".show_panel(3)
+	if netwrk.established:
+		remote_func.rpc_id(1,\"send_file_content\",\"server\")
+"
+
+[sub_resource type="GDScript" id=17]
+script/source = "extends Button
+
+func _ready():
+	hide()
+
+func _pressed():
+	var textedit = $\"../../../pnl3/scrl_log/rlb_content\"
+	
+	var content = textedit.text
+	if netwrk.established:
+		remote_func.rpc_id(1,\"override_file\",\"remote_func\",content)
+	
+	hide()
+	$\"../edit_rem_f\".show()
+"
+
+[sub_resource type="GDScript" id=18]
+script/source = "extends Button
+
+func _ready():
+	hide()
+
+func _pressed():
+	var textedit = $\"../../../pnl3/scrl_log/rlb_content\"
+	
+	var content = textedit.text
+	if netwrk.established:
+		remote_func.rpc_id(1,\"override_file\",\"server\",content)
+	
+	hide()
+	$\"../edit_serv\".show()
+"
+
+[sub_resource type="GDScript" id=7]
 script/source = "extends Button
 
 func _pressed():
@@ -49,7 +112,7 @@ func _pressed():
 		print(\"Network not ready\")
 "
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=8]
 script/source = "extends Button
 
 var max_iterations = 9000000
@@ -88,7 +151,7 @@ func _count_step():
 	step = 0
 "
 
-[sub_resource type="Shader" id=8]
+[sub_resource type="Shader" id=9]
 code = "shader_type canvas_item;
 
 uniform float first_angle  : hint_range (-180.0 , 180.0, 2.0);
@@ -119,14 +182,14 @@ void fragment () {
 }
 "
 
-[sub_resource type="ShaderMaterial" id=9]
-shader = SubResource( 8 )
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
 shader_param/first_angle = -180.0
 shader_param/last_angle = 180.0
 shader_param/smooth_angle = 15.0
 shader_param/rotate = 61.8854
 
-[sub_resource type="GDScript" id=10]
+[sub_resource type="GDScript" id=11]
 script/source = "extends TextureRect
 
 var speed = 200
@@ -137,7 +200,7 @@ func _process(delta):
 	material.set_shader_param(\"rotate\", t*speed)
 	t = fmod(t,360)"
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=12]
 length = 2.0
 loop = true
 tracks/0/type = "value"
@@ -177,14 +240,14 @@ tracks/2/keys = {
 "values": [ 0.0, 90.0 ]
 }
 
-[sub_resource type="StyleBoxFlat" id=12]
+[sub_resource type="StyleBoxFlat" id=13]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
 bg_color = Color( 0, 0, 0, 0.662745 )
 
-[sub_resource type="GDScript" id=13]
+[sub_resource type="GDScript" id=14]
 script/source = "extends VBoxContainer
 
 
@@ -251,6 +314,16 @@ func add_entry(entry):
 
 "
 
+[sub_resource type="GDScript" id=15]
+script/source = "extends TextEdit
+
+func _ready():
+	remote_func.connect(\"file_content_received\",self,\"_content_received\")
+
+func _content_received(content):
+	text = content
+"
+
 [node name="control_room" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -280,16 +353,16 @@ __meta__ = {
 }
 
 [node name="pnl1" type="PanelContainer" parent="hbox"]
-margin_right = 166.0
-margin_bottom = 238.0
+margin_right = 175.0
+margin_bottom = 382.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
 [node name="vbox" type="VBoxContainer" parent="hbox/pnl1"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 159.0
-margin_bottom = 231.0
+margin_right = 168.0
+margin_bottom = 375.0
 
 [node name="connect" type="Button" parent="hbox/pnl1/vbox"]
 visible = false
@@ -312,7 +385,7 @@ text = "Disconnect"
 script = SubResource( 2 )
 
 [node name="shut_server" type="Button" parent="hbox/pnl1/vbox"]
-margin_right = 152.0
+margin_right = 161.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
@@ -322,7 +395,7 @@ script = SubResource( 3 )
 
 [node name="restart" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 36.0
-margin_right = 152.0
+margin_right = 161.0
 margin_bottom = 68.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
@@ -332,7 +405,7 @@ script = SubResource( 4 )
 
 [node name="req_log" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 72.0
-margin_right = 152.0
+margin_right = 161.0
 margin_bottom = 104.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
@@ -340,15 +413,55 @@ enabled_focus_mode = 0
 text = "Request log"
 script = SubResource( 5 )
 
-[node name="test" type="Button" parent="hbox/pnl1/vbox"]
+[node name="edit_rem_f" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 108.0
-margin_right = 152.0
+margin_right = 161.0
 margin_bottom = 140.0
 rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
-text = "test"
+text = "Edit remote_func.gd"
 script = SubResource( 6 )
+
+[node name="edit_serv" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 144.0
+margin_right = 161.0
+margin_bottom = 176.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Edit server.gd"
+script = SubResource( 16 )
+
+[node name="update_rem_f" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 180.0
+margin_right = 161.0
+margin_bottom = 212.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Update remote_func.gd"
+script = SubResource( 17 )
+
+[node name="update_serv" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 216.0
+margin_right = 161.0
+margin_bottom = 248.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Update server.gd"
+script = SubResource( 18 )
+
+[node name="test" type="Button" parent="hbox/pnl1/vbox"]
+margin_top = 252.0
+margin_right = 161.0
+margin_bottom = 284.0
+rect_min_size = Vector2( 0, 32 )
+focus_mode = 0
+enabled_focus_mode = 0
+text = "test"
+script = SubResource( 7 )
 
 [node name="calc_PI" type="Button" parent="hbox/pnl1/vbox"]
 visible = false
@@ -359,7 +472,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "calculate PI"
-script = SubResource( 7 )
+script = SubResource( 8 )
 
 [node name="PI_val" type="Label" parent="hbox/pnl1/vbox/calc_PI"]
 anchor_left = 1.0
@@ -385,40 +498,73 @@ __meta__ = {
 }
 
 [node name="loading rect" type="TextureRect" parent="hbox/pnl1/vbox"]
-material = SubResource( 9 )
-margin_top = 144.0
-margin_right = 152.0
-margin_bottom = 224.0
+material = SubResource( 10 )
+margin_top = 288.0
+margin_right = 161.0
+margin_bottom = 368.0
 rect_min_size = Vector2( 0, 80 )
 texture = ExtResource( 3 )
 expand = true
 stretch_mode = 6
-script = SubResource( 10 )
+script = SubResource( 11 )
 
 [node name="anim" type="AnimationPlayer" parent="hbox/pnl1/vbox/loading rect"]
 autoplay = "loading"
-anims/loading = SubResource( 11 )
+anims/loading = SubResource( 12 )
 
 [node name="pnl2" type="PanelContainer" parent="hbox"]
-margin_left = 174.0
-margin_right = 1008.0
+margin_left = 183.0
+margin_right = 591.0
 margin_bottom = 584.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.0
-custom_styles/panel = SubResource( 12 )
+custom_styles/panel = SubResource( 13 )
 
 [node name="scrl_log" type="ScrollContainer" parent="hbox/pnl2"]
 margin_left = 8.0
 margin_top = 8.0
-margin_right = 826.0
+margin_right = 400.0
 margin_bottom = 576.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="log_list" type="VBoxContainer" parent="hbox/pnl2/scrl_log"]
-margin_right = 818.0
+margin_right = 392.0
 margin_bottom = 568.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = SubResource( 13 )
+script = SubResource( 14 )
+
+[node name="pnl3" type="PanelContainer" parent="hbox"]
+margin_left = 599.0
+margin_right = 1008.0
+margin_bottom = 584.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 5.0
+custom_styles/panel = SubResource( 13 )
+
+[node name="scrl_log" type="ScrollContainer" parent="hbox/pnl3"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 401.0
+margin_bottom = 576.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="rlb_content" type="TextEdit" parent="hbox/pnl3/scrl_log"]
+margin_right = 393.0
+margin_bottom = 568.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+text = "uno
+	due
+		tre
+	"
+syntax_highlighting = true
+show_line_numbers = true
+draw_tabs = true
+smooth_scrolling = true
+script = SubResource( 15 )
