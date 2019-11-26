@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=7 format=2]
 
-[ext_resource path="res://styles/CreteRound-Regular.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://styles/karla/Karla-Bold.ttf" type="DynamicFontData" id=1]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.2, 0.196078, 0.196078, 0.133333 )
@@ -57,7 +57,7 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="DynamicFont" id=5]
-size = 12
+size = 22
 font_data = ExtResource( 1 )
 
 [resource]

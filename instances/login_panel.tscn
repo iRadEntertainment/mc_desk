@@ -1,206 +1,300 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/login_panel.gd" type="Script" id=1]
 [ext_resource path="res://styles/small_labels.tres" type="Theme" id=2]
 [ext_resource path="res://styles/tool_buttons.tres" type="Theme" id=3]
+[ext_resource path="res://styles/Titillium/Titillium-Bold.otf" type="DynamicFontData" id=4]
+[ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=5]
+[ext_resource path="res://styles/karla/Karla-BoldItalic.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://instances/user_input.gd" type="Script" id=7]
+
+[sub_resource type="DynamicFont" id=2]
+size = 18
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+font_data = ExtResource( 4 )
 
 [node name="login_panel" type="Control"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="login_icons" type="GridContainer" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -150.0
-margin_top = -223.15
-margin_right = 150.0
-margin_bottom = 76.8503
+[node name="pnl_pass" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="vbox" type="VBoxContainer" parent="pnl_pass"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 4
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="infos" type="Label" parent="pnl_pass/vbox"]
+margin_top = -1.0
+margin_right = 1024.0
+margin_bottom = 49.0
+rect_min_size = Vector2( 0, 50 )
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "This username doesn't exist. Are you a new user?"
+align = 1
+valign = 1
+
+[node name="bg" type="ColorRect" parent="pnl_pass/vbox/infos"]
+show_behind_parent = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0823529, 0.0784314, 0.0784314, 0.643137 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="user_input" type="LineEdit" parent="pnl_pass/vbox"]
+margin_left = 362.0
+margin_top = 54.0
+margin_right = 662.0
+margin_bottom = 88.0
+rect_min_size = Vector2( 300, 32 )
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_uneditable = Color( 0, 0, 0, 1 )
+align = 1
+placeholder_text = "user name"
+script = ExtResource( 7 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="log_btn" type="HBoxContainer" parent="pnl_pass/vbox"]
+margin_left = 58.0
+margin_top = 92.0
+margin_right = 966.0
+margin_bottom = 124.0
+size_flags_horizontal = 6
+size_flags_vertical = 0
+theme = ExtResource( 5 )
+custom_constants/separation = 4
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="log_in" type="Button" parent="pnl_pass/vbox/log_btn"]
+margin_right = 300.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 300, 32 )
+text = "Log in"
+
+[node name="new_user" type="Button" parent="pnl_pass/vbox/log_btn"]
+margin_left = 304.0
+margin_right = 604.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 300, 32 )
+text = "New user"
+
+[node name="switch_user" type="Button" parent="pnl_pass/vbox/log_btn"]
+margin_left = 608.0
+margin_right = 908.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 300, 32 )
+text = "Switch user"
+
+[node name="login_icons" type="GridContainer" parent="pnl_pass/vbox"]
+margin_left = 362.0
+margin_top = 128.0
+margin_right = 662.0
+margin_bottom = 428.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_horizontal = 6
+size_flags_vertical = 6
 columns = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="log_01" type="Button" parent="login_icons"]
+[node name="log_01" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_right = 72.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_02" type="Button" parent="login_icons"]
+[node name="log_02" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 76.0
 margin_right = 148.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_03" type="Button" parent="login_icons"]
+[node name="log_03" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 152.0
 margin_right = 224.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_04" type="Button" parent="login_icons"]
+[node name="log_04" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 228.0
 margin_right = 300.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_05" type="Button" parent="login_icons"]
+[node name="log_05" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_top = 76.0
 margin_right = 72.0
 margin_bottom = 148.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_06" type="Button" parent="login_icons"]
+[node name="log_06" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 76.0
 margin_top = 76.0
 margin_right = 148.0
 margin_bottom = 148.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_07" type="Button" parent="login_icons"]
+[node name="log_07" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 152.0
 margin_top = 76.0
 margin_right = 224.0
 margin_bottom = 148.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_08" type="Button" parent="login_icons"]
+[node name="log_08" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 228.0
 margin_top = 76.0
 margin_right = 300.0
 margin_bottom = 148.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_09" type="Button" parent="login_icons"]
+[node name="log_09" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_top = 152.0
 margin_right = 72.0
 margin_bottom = 224.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_10" type="Button" parent="login_icons"]
+[node name="log_10" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 76.0
 margin_top = 152.0
 margin_right = 148.0
 margin_bottom = 224.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_11" type="Button" parent="login_icons"]
+[node name="log_11" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 152.0
 margin_top = 152.0
 margin_right = 224.0
 margin_bottom = 224.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_12" type="Button" parent="login_icons"]
+[node name="log_12" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 228.0
 margin_top = 152.0
 margin_right = 300.0
 margin_bottom = 224.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_13" type="Button" parent="login_icons"]
+[node name="log_13" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_top = 228.0
 margin_right = 72.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_14" type="Button" parent="login_icons"]
+[node name="log_14" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 76.0
 margin_top = 228.0
 margin_right = 148.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_15" type="Button" parent="login_icons"]
+[node name="log_15" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 152.0
 margin_top = 228.0
 margin_right = 224.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_16" type="Button" parent="login_icons"]
+[node name="log_16" type="Button" parent="pnl_pass/vbox/login_icons"]
 margin_left = 228.0
 margin_top = 228.0
 margin_right = 300.0
 margin_bottom = 300.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="login_outputs" type="GridContainer" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -226.0
-margin_top = 140.699
-margin_right = 226.0
-margin_bottom = 212.699
+[node name="login_outputs" type="GridContainer" parent="pnl_pass/vbox"]
+margin_left = 286.0
+margin_top = 480.0
+margin_right = 738.0
+margin_bottom = 552.0
+grow_horizontal = 0
+size_flags_horizontal = 6
+size_flags_vertical = 6
 columns = 6
 
-[node name="log_01" type="Button" parent="login_outputs"]
+[node name="log_01" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_right = 72.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_02" type="Button" parent="login_outputs"]
+[node name="log_02" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_left = 76.0
 margin_right = 148.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_03" type="Button" parent="login_outputs"]
+[node name="log_03" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_left = 152.0
 margin_right = 224.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_04" type="Button" parent="login_outputs"]
+[node name="log_04" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_left = 228.0
 margin_right = 300.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_05" type="Button" parent="login_outputs"]
+[node name="log_05" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_left = 304.0
 margin_right = 376.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="log_06" type="Button" parent="login_outputs"]
+[node name="log_06" type="Button" parent="pnl_pass/vbox/login_outputs"]
 margin_left = 380.0
 margin_right = 452.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 72, 72 )
-theme = ExtResource( 3 )
 
-[node name="col_test" type="ColorRect" parent="."]
+[node name="space_down" type="Control" parent="pnl_pass/vbox"]
+visible = false
+margin_left = 606.0
+margin_top = 584.0
+margin_right = 606.0
+margin_bottom = 584.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="col_test" type="ColorRect" parent="pnl_pass"]
 visible = false
 margin_left = 764.657
 margin_top = 422.319
 margin_right = 804.657
 margin_bottom = 462.319
 
-[node name="hexadec" type="Label" parent="col_test"]
+[node name="hexadec" type="Label" parent="pnl_pass/col_test"]
 margin_left = -4.75507
 margin_top = 44.0975
 margin_right = 45.2449

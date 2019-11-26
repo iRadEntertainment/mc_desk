@@ -11,9 +11,11 @@ var tab_button_preload = preload("res://instances/tab_button.tscn")
 
 
 func _ready():
+	populate_central_panel()#("login")
 	netwrk.test_internet_connectivity()
 	netwrk.connect_to_server()
 	glb.connect("palette_changed",self,"_color_palette_changed")
+	return
 	populate_central_panel()
 	apply_color_palette()
 
@@ -49,7 +51,11 @@ func populate_central_panel(permission = null):
 		"all":
 			for panel in glb.permission_all:
 				add_panel_to_central_container(panel)
-			show_panel("none")
+				show_panel("none")
+		"login":
+			add_panel_to_central_container(glb.pnl_login)
+			add_panel_to_central_container(glb.pnl_settings)
+			show_panel("login_panel")
 	
 	$vbox/top_bar/hbox/tabs_buttons.hide()
 	yield(get_tree(),"idle_frame")
@@ -73,15 +79,14 @@ func add_panel_to_central_container(instance):
 #----------------------- colors ---------------------------
 func apply_color_palette(val = null):
 	if !val: val = glb.color_pal
-	$bg.color = Color(glb.color_pal[3])
-	$vbox/top_bar/bg.color = Color(glb.color_pal[4])
+	$bg.color = Color(glb.color_pal[2])
+	$vbox/top_bar/bg.color = Color(glb.color_pal[3])
 	$vbox/bot_bar/bg.color = Color(glb.color_pal[3])
 	for child in $vbox/top_bar/hbox.get_children() + $vbox/bot_bar/hbox.get_children():
 		if child is Label:
-			child.add_color_override("font_color", Color(glb.color_pal[0]))
+			child.add_color_override("font_color", Color(glb.color_pal[1]))
 		if child is TextureRect and child.name != "wifi_ico":
-			child.modulate = Color(glb.color_pal[2])
-#	$vbox/top_bar/hbox/logo.modulate = Color(glb.color_pal[2])
+			child.modulate = Color(glb.color_pal[0])
 	
 	for node in get_tree().get_nodes_in_group("theme_nodes"):
 		node.add_color_override("font_color", Color(glb.color_pal[1]))

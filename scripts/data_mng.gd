@@ -12,6 +12,9 @@ var data_path = str(data_dir,data_filename)
 var console_log = [] setget _log_updated
 signal log_updated
 
+#---------- user preferences
+
+
 #---------- datas
 var last_update_list = {}
 
@@ -40,6 +43,8 @@ func load_initial_settings():
 		file_config.load(data_path)
 		console_log      = file_config.get_value("settings", "console_log", [] )
 		last_update_list = file_config.get_value("updates", "last_update_list", {})
+		glb.last_auth    = file_config.get_value("user","last_auth",[])
+		
 	
 	#load datas
 	if Directory.new().file_exists(balance_path):
@@ -71,6 +76,7 @@ func save_data(what_to_save_array = []):
 				glb.log_print("DATA MANAGER: saving mc_data.cfg")
 				var file_config = ConfigFile.new()
 				file_config.set_value("settings","console_log",console_log)
+				file_config.set_value("user","last_auth",glb.last_auth)
 				
 				var err_cfg = file_config.save(data_path)
 				if err_cfg == OK: glb.log_print(str ("DATA MANAGER: data file saved = ", data_path))

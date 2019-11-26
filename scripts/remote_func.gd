@@ -18,3 +18,6 @@ remote func return_user_name():
 
 remote func receive_file_content(content):
 	emit_signal("file_content_received",content)
+
+
+#=================== USER COMMS =========================

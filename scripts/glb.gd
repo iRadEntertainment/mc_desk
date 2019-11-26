@@ -5,10 +5,11 @@
 extends Node
 
 #user
-var user_name    = null
+var user_name      = null
+var last_auth      = [] #[username,code]
 
 #log
-var log_max_size = 1000
+const log_max_size = 1000
 
 #swipe_detect
 var fl_screen_p = false
