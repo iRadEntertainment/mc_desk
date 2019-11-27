@@ -20,6 +20,8 @@ export var n_of_tools  = 3
 var        code        = []
 var        code_step   = 0
 var        fl_new_user = false
+export var new_pass_confirmation_steps = 3
+var        confirmation_step = 0
 
 func _ready():
 	#--- signals
@@ -217,13 +219,23 @@ func password_completed(code):
 	#--- if server connected
 	if netwrk._get_established():
 		if fl_new_user:
-			glb.user_name = temp_username
-			remote_func.rpc_id(1, "add_user", glb.user_name , code)
-		else:
-			if remote_func.rpc_id(1, "auth_request", glb.user_name , code):
-				pass
+			confirmation_step += 1
+			if confirmation_step < new_pass_confirmation_steps:
+				$pnl_pass/vbox/infos.show()
+				var message = "Retype your password %s more time to remember it!"%(new_pass_confirmation_steps-confirmation_step)
+				$pnl_pass/vbox/infos.text = message
 			else:
-				pass
+				fl_new_user = false
+				$pnl_pass/vbox/infos.hide()
+				confirmation_step = 0
+				glb.user_name = temp_username
+				remote_func.rpc_id(1, "add_user", glb.user_name , code)
+				glb.last_auth = [glb.user_name,code]
+				data_mng.save_data(["config"])
+		else:
+			var login_result = remote_func.rpc_id(1, "auth_request", glb.user_name , code)
+			login_completed(true)
+			
 	#--- if offline
 	else:
 		pass
@@ -233,3 +245,17 @@ func _color_palette_changed(val):
 	icon_hover_color = glb.color_pal[1]
 	icon_press_color = glb.color_pal[2]
 	emit_signal("update_icon_color", "modulate" , icon_color)
+
+func login_completed(success):
+	if success:
+		glb.emit_signal("login_successful")
+		$pnl_pass/vbox/infos.show()
+		$pnl_pass/vbox/infos.text = "Welcome %s!"%glb.user_name
+		login_succeded_animation()
+	else:
+		$pnl_pass/vbox/infos.show()
+		$pnl_pass/vbox/infos.text = "Login failed! Try again?"
+
+func login_succeded_animation():
+	#TODO animation for succession
+	pass

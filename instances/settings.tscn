@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://scripts/settings.gd" type="Script" id=1]
 [ext_resource path="res://styles/palettes/pal1.jpg" type="Texture" id=2]
@@ -7,14 +7,27 @@
 [ext_resource path="res://styles/palettes/pal3.jpg" type="Texture" id=5]
 [ext_resource path="res://styles/regular_buttons1.tres" type="Theme" id=6]
 
-[sub_resource type="GDScript" id=5]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Button
 
 func _pressed():
 	OS.window_fullscreen = !OS.window_fullscreen
 "
 
-[sub_resource type="GDScript" id=6]
+[sub_resource type="GDScript" id=2]
+script/source = "extends OptionButton
+
+const locales = [\"en\",\"it\",\"da\",\"pt\"]
+
+func _ready():
+	connect(\"item_selected\",self,\"_item_selected\")
+	selected = locales.find(TranslationServer.get_locale())
+
+func _item_selected(item):
+	TranslationServer.set_locale(locales[selected])
+"
+
+[sub_resource type="GDScript" id=3]
 script/source = "extends Button
 
 const pal = [\"010010\",\"63185d\",\"fff641\",\"b9c7ec\",\"5e8254\"]
@@ -27,7 +40,7 @@ func _ready():
 		get_node(\"vb/hb/%s\"%(i+1)).color = pal[i]
 "
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=4]
 script/source = "extends Button
 
 const pal = [\"000000\",\"5e5e28\",\"acaf82\",\"dac26a\",\"d7c20f\"]
@@ -40,7 +53,7 @@ func _ready():
 		get_node(\"vb/hb/%s\"%(i+1)).color = pal[i]
 "
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=5]
 script/source = "extends Button
 
 const pal = [\"183114\",\"446129\",\"92a65f\",\"f3f4d3\",\"dcde9f\"]
@@ -87,7 +100,16 @@ margin_right = 96.0
 margin_bottom = 72.0
 theme = ExtResource( 6 )
 text = "Fullscreen"
-script = SubResource( 5 )
+script = SubResource( 1 )
+
+[node name="language" type="OptionButton" parent="opt_hbox"]
+margin_left = 100.0
+margin_right = 157.0
+margin_bottom = 72.0
+text = "en"
+items = [ "en", null, false, 0, null, "it", null, false, 1, null, "da", null, false, 2, null, "pt", null, false, 3, null ]
+selected = 0
+script = SubResource( 2 )
 
 [node name="col_settings" type="GridContainer" parent="."]
 anchor_left = 0.031
@@ -109,7 +131,7 @@ margin_bottom = 423.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 3 )
-script = SubResource( 6 )
+script = SubResource( 3 )
 
 [node name="vb" type="VBoxContainer" parent="col_settings/pal1"]
 anchor_right = 1.0
@@ -186,7 +208,7 @@ margin_bottom = 423.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 3 )
-script = SubResource( 7 )
+script = SubResource( 4 )
 
 [node name="vb" type="VBoxContainer" parent="col_settings/pal2"]
 anchor_right = 1.0
@@ -263,7 +285,7 @@ margin_bottom = 423.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 3 )
-script = SubResource( 4 )
+script = SubResource( 5 )
 
 [node name="vb" type="VBoxContainer" parent="col_settings/pal3"]
 anchor_right = 1.0

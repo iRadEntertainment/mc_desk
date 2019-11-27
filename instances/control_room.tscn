@@ -53,7 +53,7 @@ func _pressed():
 		remote_func.rpc_id(1,\"send_file_content\",\"remote_func\")
 "
 
-[sub_resource type="GDScript" id=16]
+[sub_resource type="GDScript" id=7]
 script/source = "extends Button
 
 func _pressed():
@@ -66,7 +66,7 @@ func _pressed():
 		remote_func.rpc_id(1,\"send_file_content\",\"server\")
 "
 
-[sub_resource type="GDScript" id=17]
+[sub_resource type="GDScript" id=8]
 script/source = "extends Button
 
 func _ready():
@@ -83,7 +83,7 @@ func _pressed():
 	$\"../edit_rem_f\".show()
 "
 
-[sub_resource type="GDScript" id=18]
+[sub_resource type="GDScript" id=9]
 script/source = "extends Button
 
 func _ready():
@@ -100,7 +100,7 @@ func _pressed():
 	$\"../edit_serv\".show()
 "
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=10]
 script/source = "extends Button
 
 func _pressed():
@@ -112,7 +112,7 @@ func _pressed():
 		print(\"Network not ready\")
 "
 
-[sub_resource type="GDScript" id=8]
+[sub_resource type="GDScript" id=11]
 script/source = "extends Button
 
 var max_iterations = 9000000
@@ -151,7 +151,7 @@ func _count_step():
 	step = 0
 "
 
-[sub_resource type="Shader" id=9]
+[sub_resource type="Shader" id=12]
 code = "shader_type canvas_item;
 
 uniform float first_angle  : hint_range (-180.0 , 180.0, 2.0);
@@ -182,14 +182,14 @@ void fragment () {
 }
 "
 
-[sub_resource type="ShaderMaterial" id=10]
-shader = SubResource( 9 )
+[sub_resource type="ShaderMaterial" id=13]
+shader = SubResource( 12 )
 shader_param/first_angle = -180.0
 shader_param/last_angle = 180.0
 shader_param/smooth_angle = 15.0
 shader_param/rotate = 61.8854
 
-[sub_resource type="GDScript" id=11]
+[sub_resource type="GDScript" id=14]
 script/source = "extends TextureRect
 
 var speed = 200
@@ -200,7 +200,7 @@ func _process(delta):
 	material.set_shader_param(\"rotate\", t*speed)
 	t = fmod(t,360)"
 
-[sub_resource type="Animation" id=12]
+[sub_resource type="Animation" id=15]
 length = 2.0
 loop = true
 tracks/0/type = "value"
@@ -240,14 +240,14 @@ tracks/2/keys = {
 "values": [ 0.0, 90.0 ]
 }
 
-[sub_resource type="StyleBoxFlat" id=13]
+[sub_resource type="StyleBoxFlat" id=16]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 8.0
 content_margin_bottom = 8.0
 bg_color = Color( 0, 0, 0, 0.662745 )
 
-[sub_resource type="GDScript" id=14]
+[sub_resource type="GDScript" id=17]
 script/source = "extends VBoxContainer
 
 
@@ -314,7 +314,7 @@ func add_entry(entry):
 
 "
 
-[sub_resource type="GDScript" id=15]
+[sub_resource type="GDScript" id=18]
 script/source = "extends TextEdit
 
 func _ready():
@@ -354,7 +354,7 @@ __meta__ = {
 
 [node name="pnl1" type="PanelContainer" parent="hbox"]
 margin_right = 175.0
-margin_bottom = 382.0
+margin_bottom = 298.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
@@ -362,7 +362,7 @@ size_flags_vertical = 0
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 168.0
-margin_bottom = 375.0
+margin_bottom = 291.0
 
 [node name="connect" type="Button" parent="hbox/pnl1/vbox"]
 visible = false
@@ -431,7 +431,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "Edit server.gd"
-script = SubResource( 16 )
+script = SubResource( 7 )
 
 [node name="update_rem_f" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 180.0
@@ -441,7 +441,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "Update remote_func.gd"
-script = SubResource( 17 )
+script = SubResource( 8 )
 
 [node name="update_serv" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 216.0
@@ -451,7 +451,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "Update server.gd"
-script = SubResource( 18 )
+script = SubResource( 9 )
 
 [node name="test" type="Button" parent="hbox/pnl1/vbox"]
 margin_top = 252.0
@@ -461,7 +461,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "test"
-script = SubResource( 7 )
+script = SubResource( 10 )
 
 [node name="calc_PI" type="Button" parent="hbox/pnl1/vbox"]
 visible = false
@@ -472,7 +472,7 @@ rect_min_size = Vector2( 0, 32 )
 focus_mode = 0
 enabled_focus_mode = 0
 text = "calculate PI"
-script = SubResource( 8 )
+script = SubResource( 11 )
 
 [node name="PI_val" type="Label" parent="hbox/pnl1/vbox/calc_PI"]
 anchor_left = 1.0
@@ -498,7 +498,8 @@ __meta__ = {
 }
 
 [node name="loading rect" type="TextureRect" parent="hbox/pnl1/vbox"]
-material = SubResource( 10 )
+visible = false
+material = SubResource( 13 )
 margin_top = 288.0
 margin_right = 161.0
 margin_bottom = 368.0
@@ -506,11 +507,10 @@ rect_min_size = Vector2( 0, 80 )
 texture = ExtResource( 3 )
 expand = true
 stretch_mode = 6
-script = SubResource( 11 )
+script = SubResource( 14 )
 
 [node name="anim" type="AnimationPlayer" parent="hbox/pnl1/vbox/loading rect"]
-autoplay = "loading"
-anims/loading = SubResource( 12 )
+anims/loading = SubResource( 15 )
 
 [node name="pnl2" type="PanelContainer" parent="hbox"]
 margin_left = 183.0
@@ -519,7 +519,7 @@ margin_bottom = 584.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.0
-custom_styles/panel = SubResource( 13 )
+custom_styles/panel = SubResource( 16 )
 
 [node name="scrl_log" type="ScrollContainer" parent="hbox/pnl2"]
 margin_left = 8.0
@@ -534,7 +534,7 @@ margin_right = 392.0
 margin_bottom = 568.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = SubResource( 14 )
+script = SubResource( 17 )
 
 [node name="pnl3" type="PanelContainer" parent="hbox"]
 margin_left = 599.0
@@ -543,7 +543,7 @@ margin_bottom = 584.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 5.0
-custom_styles/panel = SubResource( 13 )
+custom_styles/panel = SubResource( 16 )
 
 [node name="scrl_log" type="ScrollContainer" parent="hbox/pnl3"]
 margin_left = 8.0
@@ -567,4 +567,4 @@ syntax_highlighting = true
 show_line_numbers = true
 draw_tabs = true
 smooth_scrolling = true
-script = SubResource( 15 )
+script = SubResource( 18 )

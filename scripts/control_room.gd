@@ -1,6 +1,6 @@
 extends Control
 
-const tag = "Control room"
+const tag = "KEY_CTRL_ROOM"
 
 func _ready():
 	show_panel(2)

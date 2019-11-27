@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+
+[deps]
+
+files=[ "res://localization/ciccio.en.translation", "res://localization/ciccio.it.translation", "res://localization/ciccio.pt.translation", "res://localization/ciccio.da.translation" ]
+
+source_file="res://localization/ciccio.csv"
+dest_files=[ "res://localization/ciccio.en.translation", "res://localization/ciccio.it.translation", "res://localization/ciccio.pt.translation", "res://localization/ciccio.da.translation" ]
+
+[params]
+
+compress=true
+delimiter=0

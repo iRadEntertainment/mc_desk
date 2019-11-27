@@ -34,6 +34,11 @@ gdscript/warnings/enable=false
 
 enabled=PoolStringArray( "calendar_button" )
 
+[locale]
+
+translations=PoolStringArray( "res://localization/ciccio.en.translation", "res://localization/ciccio.it.translation", "res://localization/ciccio.da.translation", "res://localization/ciccio.pt.translation" )
+locale_filter=[ 0, [ "da", "en", "it", "pt" ] ]
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

@@ -7,6 +7,7 @@ extends Node
 #user
 var user_name      = null
 var last_auth      = [] #[username,code]
+signal login_successful
 
 #log
 const log_max_size = 1000
