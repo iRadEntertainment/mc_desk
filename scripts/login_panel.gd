@@ -28,6 +28,7 @@ func _ready():
 	connect_username_buttons()
 	connect_grid_buttons_to_self()
 	glb.connect("palette_changed",self,"_color_palette_changed")
+	glb.connect("server_auth_updated",self,"login_completed")
 	#--- setup
 	populate_login_grid(0)
 	populate_output_grid()
@@ -234,7 +235,6 @@ func password_completed(code):
 				data_mng.save_data(["config"])
 		else:
 			var login_result = remote_func.rpc_id(1, "auth_request", glb.user_name , code)
-			login_completed(true)
 			
 	#--- if offline
 	else:
@@ -255,7 +255,9 @@ func login_completed(success):
 	else:
 		$pnl_pass/vbox/infos.show()
 		$pnl_pass/vbox/infos.text = "Login failed! Try again?"
+		login_succeded_animation()
 
 func login_succeded_animation():
 	#TODO animation for succession
-	pass
+	if glb.server_auth:
+		print("Login successful")
