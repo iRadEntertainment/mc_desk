@@ -15,6 +15,7 @@ var   reconnect_timer = Timer.new()
 var   connection_attempt = 0
 
 #network
+signal network_connected
 signal network_status_changed
 signal internet_status_changed
 
@@ -108,6 +109,7 @@ func _on_connection_succeeded():
 	connection_attempt = 0
 	reconnect_timer.stop()
 	set_timer_for_reconnect()
+	emit_signal("network_connected")
 
 #----------------- network communications ---------------------
 

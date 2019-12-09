@@ -17,8 +17,4 @@ func _check_for_existing_users(txt):
 		$"../log_btn/new_user".visible = true
 
 func _text_entered(val):
-	var ciccio = remote_func.rpc_id(1,"send_existing_users")
-	yield(get_tree(),"idle_frame")
-	yield(get_tree(),"idle_frame")
-	yield(get_tree(),"idle_frame")
-	print(ciccio)
+	pass
