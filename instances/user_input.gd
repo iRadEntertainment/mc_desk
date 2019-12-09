@@ -12,4 +12,5 @@ func _check_for_existing_users(txt):
 		$"../log_btn/new_user".visible = true
 
 func _text_entered(val):
-	print(val)
+	pass
+

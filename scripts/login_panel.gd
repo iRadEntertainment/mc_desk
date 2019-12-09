@@ -5,7 +5,9 @@
 extends Control
 
 const tag = "Login panel"
+var fl_server_infos_received = false
 
+#--- login icons
 onready var tool_sheet = load("res://sprites/login_tools.png")
 onready var mats_sheet = load("res://sprites/login_mats.png")
 
@@ -15,6 +17,7 @@ onready var icon_press_color = glb.color_pal[2]
 
 signal update_icon_color
 
+#--- login params
 export var code_lenght = 6
 export var n_of_tools  = 3
 var        code        = []
@@ -28,7 +31,9 @@ func _ready():
 	connect_username_buttons()
 	connect_grid_buttons_to_self()
 	glb.connect("palette_changed",self,"_color_palette_changed")
-	glb.connect("server_auth_updated",self,"login_completed")
+	netwrk.connect("network_connected",self,"_retrieve_info_from_server")
+	remote_func.connect("existing_users_received",self,"_existing_users_received")
+
 	#--- setup
 	populate_login_grid(0)
 	populate_output_grid()
@@ -36,6 +41,10 @@ func _ready():
 	
 	username_initial_input_state()
 
+func _retrieve_info_from_server():
+	remote_func.rpc_id(1,"send_existing_users")
+func _existing_users_received(users):
+	print (users)
 
 #============================== Username Input ==============================
 func username_initial_input_state():
@@ -251,13 +260,16 @@ func login_completed(success):
 		glb.emit_signal("login_successful")
 		$pnl_pass/vbox/infos.show()
 		$pnl_pass/vbox/infos.text = "Welcome %s!"%glb.user_name
-		login_succeded_animation()
+		login_succeded_animation(true)
 	else:
 		$pnl_pass/vbox/infos.show()
 		$pnl_pass/vbox/infos.text = "Login failed! Try again?"
-		login_succeded_animation()
+		login_succeded_animation(false)
 
-func login_succeded_animation():
+
+func login_succeded_animation(succeeded):
 	#TODO animation for succession
-	if glb.server_auth:
-		print("Login successful")
+	if succeeded:
+		pass
+	else:
+		pass
