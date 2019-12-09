@@ -33,6 +33,7 @@ func _ready():
 	glb.connect("palette_changed",self,"_color_palette_changed")
 	netwrk.connect("network_connected",self,"_retrieve_info_from_server")
 	remote_func.connect("existing_users_received",self,"_existing_users_received")
+
 	#--- setup
 	populate_login_grid(0)
 	populate_output_grid()
@@ -243,7 +244,6 @@ func password_completed(code):
 				data_mng.save_data(["config"])
 		else:
 			var login_result = remote_func.rpc_id(1, "auth_request", glb.user_name , code)
-			login_completed(true)
 			
 	#--- if offline
 	else:
@@ -265,6 +265,7 @@ func login_completed(success):
 		$pnl_pass/vbox/infos.show()
 		$pnl_pass/vbox/infos.text = "Login failed! Try again?"
 		login_succeded_animation(false)
+
 
 func login_succeded_animation(succeeded):
 	#TODO animation for succession

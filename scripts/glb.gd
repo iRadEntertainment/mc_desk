@@ -7,22 +7,28 @@ extends Node
 #user
 var user_name      = null
 var last_auth      = [] #[username,code]
-signal login_successful
 
 #log
 const log_max_size = 1000
 
-#swipe_detect
-var fl_screen_p = false
-var fl_dragging = false
-var current_tab = 1
+#remote var
+#rset_id(<peer_id>, “variable”, value)
+var fl_connected_to_server := false
+#--- user auth
+remote var existing_users = []
+signal server_auth_updated
+remote var server_auth   := false setget _server_auth_updated
+remote var online_users   = []
+#--- finance
+signal serv_balance_updated
+remote var serv_balance_list = {} setget _server_balance_updated
+#--- tasks
+signal serv_tasks_updated
+remote var serv_tasks_list   = {} setget _server_tasks_updated
 
 #nodes
 onready var main             = $"/root/main"
-#onready var pnl_control_room = $"/root/main/vbox/cnt_center/control_room"
-#onready var pnl_login        = $"/root/main/vbox/cnt_center/login_panel"
-#onready var pnl_finance      = $"/root/main/vbox/cnt_center/finance_panel"
-#onready var pnl_tasks        = $"/root/main/vbox/cnt_center/tasks_panel"
+
 var pnl_control_room = preload("res://instances/control_room.tscn").instance()
 var pnl_login        = preload("res://instances/login_panel.tscn").instance()
 var pnl_finance      = preload("res://instances/finance_panel.tscn").instance()
@@ -36,6 +42,23 @@ const col_red    = Color("D2222D")
 const col_green  = Color("007000")
 const col_yellow = Color("FFBF00")
 var color_pal = ["010010","63185d","fff641","b9c7ec","5e8254"] setget _palette_changed
+
+#--------------------- server variables ---------------------
+func _ready():
+	pass
+
+func _server_auth_updated(val):
+	server_auth = val
+	emit_signal("server_auth_updated",server_auth)
+
+func _server_balance_updated(val):
+	serv_balance_list = val
+	emit_signal("serv_balance_updated")
+
+func _server_tasks_updated(val):
+	serv_tasks_list = val
+	emit_signal("serv_tasks_updated")
+
 
 #--------------------- console utilities ---------------------
 func log_print(string):

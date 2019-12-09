@@ -16,13 +16,13 @@ var   connection_attempt = 0
 
 #network
 signal network_connected
+signal network_established
 signal network_status_changed
 signal internet_status_changed
 
 var fl_internet_connection = false
 var established = false setget _set_established, _get_established
 var connecting  = false
-var logged_in   = false
 
 #authentication
 var net_id      = -1
@@ -46,7 +46,15 @@ func _ready():
 	set_timer_for_reconnect()
 	add_child(reconnect_timer)
 	reconnect_timer.connect("timeout",self,"_attempt_reconnection")
+	set_network_master(1)
+	yield(self,"network_established")
+	update_vars_from_server()
 
+func update_vars_from_server():
+	remote_func.rpc_id(1,"send_existing_users")
+	
+
+#----------------
 func connect_to_server():
 	var res = host.create_client(ADDRESS,PORT)
 	
@@ -152,6 +160,7 @@ func set_timer_for_reconnect():
 func _set_established(val):
 	established = val
 	emit_signal("network_status_changed",val)
+	glb.fl_connected_to_server = val
 
 func _get_established():
 	if (get_tree().get_network_peer()):
